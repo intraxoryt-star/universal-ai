@@ -1,40 +1,64 @@
 # Universal AI
 
-A multi-model AI workspace built with React, Vite, Supabase Auth, and Supabase Edge Functions.
+A responsive multi-model AI workspace built with React, Vite, Supabase Auth, Supabase Edge Functions, and Vercel.
 
-## Features
+## Implemented
 - Google OAuth and email magic-link sign-in
-- GPT-OSS 20B, GPT-OSS 120B, and Qwen 3.8 model selection
-- Side-by-side responses from two models
-- Server-side Groq API key handling
-- Automatic model fallback in the Edge Function
-- Responsive dark interface
+- Private conversation and message history in Supabase
+- Model selection for the configured Groq, Gemini, and xAI routes
+- Side-by-side model comparison
+- Server-side provider API key handling in the `ai-chat` Edge Function
+- Responsive creative dashboard, tool directory, and chat workspace
+- External launch link for Google Flow
+
+## Not yet implemented
+These are visible as planned/preview features in the UI, not production integrations:
+- Native AI image generation
+- Native AI video generation
+- TTS and speech-to-text workflows
+- PDF/DOCX parsing, OCR, and structured extraction
+- Translation workflow
+- Credit wallet, metering, top-ups, invoices, and admin console
+- Payment gateway checkout
+
+Do not advertise these as available until the relevant provider, storage, security, and billing flows have been integrated and tested.
 
 ## Local setup
 ```bash
 npm install
-cp .env.example .env
+cp .env.example .env.local
 npm run dev
-```
-The included `.env.example` contains this project URL and its browser-safe publishable key. Copy it to `.env.local` for local development. For Vercel, add the same two variables in Project Settings → Environment Variables.
-Never put a Groq key or Supabase secret/service-role key in frontend variables.
+``
+
+Required browser-safe variables:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+
+Never place provider API keys, Supabase secret keys, or service-role keys in frontend environment variables.
 
 ## Supabase
 Project URL: https://gkwmnfebvfafkdlmqyyt.supabase.co
 
-The `ai-chat` Edge Function requires the server-side `GROQ_API_KEY` secret. Keep JWT verification enabled.
-For Google sign-in, enable the Google provider in Supabase Authentication, add the deployed site's URL to allowed redirects, and keep the Google client secret only in Supabase provider settings.
+The `ai-chat` Edge Function requires provider secrets configured in Supabase Edge Function Secrets:
+- Groq: `GROQ_API_KEY`
+- xAI: `XAI_API_KEY` (or `GROK_API_KEY`)
+- Gemini: `GEMINI_API_KEY` (or `GOOGLE_API_KEY`)
+
+The function validates the requested model against its server-side allowlist. Keep JWT verification enabled. Configure Google OAuth and the production redirect URLs in Supabase Auth settings.
 
 ## Vercel
-Import `intraxoryt-star/universal-ai` into Vercel and set:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`
+Connected repository: `intraxoryt-star/universal-ai`
 
-Build command: `npm run build`
-Output directory: `dist`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Framework: Vite
 
-Side-by-side mode sends two separate provider requests and uses more quota than a single response.
+Set the two browser-safe Supabase variables in Vercel Project Settings → Environment Variables.
 
+## Billing and production readiness
+Free provider quotas are limited and can change. A public service with real users may incur provider, database, storage, bandwidth, and hosting costs. Do not promise unlimited free usage.
 
-## Current scope
-The current build implements Google OAuth, email magic-link authentication, single-model chat, and two-model comparison through the deployed `ai-chat` Edge Function. Conversation history persistence, saved projects, shared memory, and provider self-service key management are not implemented in this frontend yet.
+Credit balances and payment confirmations must be calculated and verified server-side. Payment gateway onboarding, KYC, and merchant settlement require an eligible adult/legal guardian-owned account for a minor project owner. Do not collect or store raw card details in this application.
+
+## Current deployment
+The Vercel production project is connected to this repository. Check the Vercel project dashboard for the current production alias and build status.
