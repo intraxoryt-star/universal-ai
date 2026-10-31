@@ -75,3 +75,5 @@
 .composer-bottom button svg{width:17px}
 .ai-disclaimer{text-align:center;color:#5f6d86;font-size:8px;margin:9px 0 0}
 @media(max-width:700px){.chat-scroll{padding:22px 14px}.chat-composer-area{width:calc(100% - 24px)}.user-message{max-width:94%}.answer-grid{grid-template-columns:1fr}.answer-card{padding:14px}.chat-topbar{padding:0 14px}.model-picker{min-width:130px}.attach-action{padding:6px 7px}.attach-action span{font-size:8px}}
+
+.research-toggle{height:29px;display:inline-flex;align-items:center;gap:6px;padding:0 9px;border:1px solid #303b55;border-radius:8px;background:#182238;color:#aebbd4;font-size:9px;cursor:pointer}.research-toggle svg{width:13px;height:13px}.research-toggle.active{border-color:#7a72d8;background:#28264c;color:#d4ceff;box-shadow:0 0 0 2px #7775c91b}.model-picker select:disabled{opacity:.8;cursor:not-allowed}
