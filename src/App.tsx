@@ -72,7 +72,7 @@ export default function App(){
  }
  function speakReply(text:string){
   if(!("speechSynthesis" in window)){setNotice("Read aloud is not supported in this browser.");return;}
-  window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang=/[\\u0900-\\u097F]/.test(text)?"hi-IN":"en-IN";utterance.rate=1;window.speechSynthesis.speak(utterance);
+  window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang=/[\u0900-\u097F]/.test(text)?"hi-IN":"en-IN";utterance.rate=1;window.speechSynthesis.speak(utterance);
  }
 
  if(!ready)return <div className="boot-screen"><Sparkles/><span>Preparing your workspace…</span></div>;
