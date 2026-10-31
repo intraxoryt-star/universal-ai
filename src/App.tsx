@@ -30,7 +30,7 @@ export default function App(){
  const [email,setEmail]=useState(""),[authBusy,setAuthBusy]=useState(false),[authNote,setAuthNote]=useState("");
  const [page,setPage]=useState<"home"|"chat"|"tools">("home"),[menu,setMenu]=useState(false);
  const [convs,setConvs]=useState<Conv[]>([]),[convId,setConvId]=useState<string|null>(null),[messages,setMessages]=useState<Msg[]>([]);
- const [model,setModel]=useState(models[0].id),[compareModel,setCompareModel]=useState("gemini-3.8-flash"),[compare,setCompare]=useState(false);
+ const [model,setModel]=useState(models[0].id),[compareModel,setCompareModel]=useState("openai/gpt-oss-120b"),[compare,setCompare]=useState(false);
  const [draft,setDraft]=useState(""),[loading,setLoading]=useState(false),[notice,setNotice]=useState(""),[search,setSearch]=useState("");
  const [attachments,setAttachments]=useState<Attachment[]>([]),[thinking,setThinking]=useState<"standard"|"deep">("standard");
  const selected=useMemo(()=>models.find(m=>m.id===model)??models[0],[model]);
