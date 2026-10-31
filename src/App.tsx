@@ -26,7 +26,7 @@ const shortcuts = [
 const nameOf=(id?:string|null)=>models.find(m=>m.id===id)?.name??"Universal AI";
 
 function inlineMarkdown(value:string):ReactNode[]{
- const pattern=/(`[^`]+`|\\*\\*[^*]+\\*\\*|\\*[^*]+\\*|\\[[^\\]]+\\]\\(https?:\\/\\/[^)]+\\))/g;
+ const pattern=/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\(https?:\/\/[^)]+\))/g;
  return value.split(pattern).filter(Boolean).map((part,index)=>{
   if(part.startsWith("`")&&part.endsWith("`"))return <code key={index}>{part.slice(1,-1)}</code>;
   if(part.startsWith("**")&&part.endsWith("**"))return <strong key={index}>{part.slice(2,-2)}</strong>;
@@ -36,16 +36,16 @@ function inlineMarkdown(value:string):ReactNode[]{
  });
 }
 function renderMarkdown(source:string):ReactNode[]{
- const lines=source.replace(/\\r/g,"").split("\\n");const out:ReactNode[]=[];let i=0;
+ const lines=source.replace(/\r/g,"").split("\n");const out:ReactNode[]=[];let i=0;
  while(i<lines.length){
   const line=lines[i];if(!line.trim()){i++;continue;}
-  if(line.startsWith("```")){const lang=line.slice(3).trim();const code:string[]=[];i++;while(i<lines.length&&!lines[i].startsWith("```")){code.push(lines[i]);i++;}if(i<lines.length)i++;out.push(<pre className="markdown-code" key={out.length}><code data-language={lang}>{code.join("\\n")}</code></pre>);continue;}
-  const heading=line.match(/^(#{1,3})\\s+(.+)$/);if(heading){const content=inlineMarkdown(heading[2]);const key=out.length;if(heading[1].length===1)out.push(<h3 key={key}>{content}</h3>);else if(heading[1].length===2)out.push(<h4 key={key}>{content}</h4>);else out.push(<h5 key={key}>{content}</h5>);i++;continue;}
+  if(line.startsWith("```")){const lang=line.slice(3).trim();const code:string[]=[];i++;while(i<lines.length&&!lines[i].startsWith("```")){code.push(lines[i]);i++;}if(i<lines.length)i++;out.push(<pre className="markdown-code" key={out.length}><code data-language={lang}>{code.join("\n")}</code></pre>);continue;}
+  const heading=line.match(/^(#{1,3})\s+(.+)$/);if(heading){const content=inlineMarkdown(heading[2]);const key=out.length;if(heading[1].length===1)out.push(<h3 key={key}>{content}</h3>);else if(heading[1].length===2)out.push(<h4 key={key}>{content}</h4>);else out.push(<h5 key={key}>{content}</h5>);i++;continue;}
   if(/^[-*_]{3,}$/.test(line.trim())){out.push(<hr key={out.length}/>);i++;continue;}
-  if(/^>\\s?/.test(line)){out.push(<blockquote key={out.length}>{inlineMarkdown(line.replace(/^>\\s?/,""))}</blockquote>);i++;continue;}
-  if(/^[-*]\\s+/.test(line)){const items:ReactNode[]=[];while(i<lines.length&&/^[-*]\\s+/.test(lines[i])){items.push(<li key={items.length}>{inlineMarkdown(lines[i].replace(/^[-*]\\s+/,""))}</li>);i++;}out.push(<ul key={out.length}>{items}</ul>);continue;}
-  if(/^\\d+\\.\\s+/.test(line)){const items:ReactNode[]=[];while(i<lines.length&&/^\\d+\\.\\s+/.test(lines[i])){items.push(<li key={items.length}>{inlineMarkdown(lines[i].replace(/^\\d+\\.\\s+/,""))}</li>);i++;}out.push(<ol key={out.length}>{items}</ol>);continue;}
-  const paragraph=[line];i++;while(i<lines.length&&lines[i].trim()&&!/^(#{1,3}\\s|[-*]\\s+|\\d+\\.\\s+|>\\s?|```|[-*_]{3,}$)/.test(lines[i])){paragraph.push(lines[i]);i++;}out.push(<p key={out.length}>{paragraph.map((part,n)=><span key={n}>{n>0?" ":""}{inlineMarkdown(part)}</span>)}</p>);
+  if(/^>\s?/.test(line)){out.push(<blockquote key={out.length}>{inlineMarkdown(line.replace(/^>\s?/,""))}</blockquote>);i++;continue;}
+  if(/^[-*]\s+/.test(line)){const items:ReactNode[]=[];while(i<lines.length&&/^[-*]\s+/.test(lines[i])){items.push(<li key={items.length}>{inlineMarkdown(lines[i].replace(/^[-*]\s+/,""))}</li>);i++;}out.push(<ul key={out.length}>{items}</ul>);continue;}
+  if(/^\d+\.\s+/.test(line)){const items:ReactNode[]=[];while(i<lines.length&&/^\d+\.\s+/.test(lines[i])){items.push(<li key={items.length}>{inlineMarkdown(lines[i].replace(/^\d+\.\s+/,""))}</li>);i++;}out.push(<ol key={out.length}>{items}</ol>);continue;}
+  const paragraph=[line];i++;while(i<lines.length&&lines[i].trim()&&!/^(#{1,3}\s|[-*]\s+|\d+\.\s+|>\s?|```|[-*_]{3,}$)/.test(lines[i])){paragraph.push(lines[i]);i++;}out.push(<p key={out.length}>{paragraph.map((part,n)=><span key={n}>{n>0?" ":""}{inlineMarkdown(part)}</span>)}</p>);
  }
  return out;
 }
