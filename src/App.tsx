@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { createClient, type Session } from "@supabase/supabase-js";
-import { ArrowUp, Bot, Check, ChevronDown, CircleHelp, Cpu, LogOut, MessageSquare, Plus, Sparkles, Zap } from "lucide-react";
+import { ArrowUp, Bot, ChevronDown, CircleHelp, Cpu, LogOut, MessageSquare, Plus, Sparkles, Zap } from "lucide-react";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
