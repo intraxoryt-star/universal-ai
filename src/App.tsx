@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent, type KeyboardEvent } from "react";
 import { createClient, type Session } from "@supabase/supabase-js";
-import { ArrowRight, ArrowUp, AudioLines, BookOpen, Bot, Check, ChevronDown, CircleHelp, Code2, Film, FileText, Gamepad2, Image as ImageIcon, LayoutGrid, LogOut, Menu, MessageSquare, Mic2, Plus, Search, Sparkles, WandSparkles, X, Zap, Paperclip, Camera, BrainCircuit, FileUp } from "lucide-react";
+import { ArrowRight, ArrowUp, AudioLines, BookOpen, Bot, Check, ChevronDown, CircleHelp, Code2, Film, FileText, Gamepad2, Image as ImageIcon, LayoutGrid, LogOut, Menu, MessageSquare, Mic2, Plus, Search, Sparkles, WandSparkles, X, Zap, Paperclip, BrainCircuit, FileUp } from "lucide-react";
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
