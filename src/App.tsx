@@ -32,7 +32,8 @@ export default function App(){
  const [convs,setConvs]=useState<Conv[]>([]),[convId,setConvId]=useState<string|null>(null),[messages,setMessages]=useState<Msg[]>([]);
  const [model,setModel]=useState(models[0].id),[compareModel,setCompareModel]=useState("openai/gpt-oss-120b"),[compare,setCompare]=useState(false);
  const [draft,setDraft]=useState(""),[loading,setLoading]=useState(false),[notice,setNotice]=useState(""),[search,setSearch]=useState("");
- const [attachments,setAttachments]=useState<Attachment[]>([]),[thinking,setThinking]=useState<"standard"|"deep">("standard");\n const [voiceListening,setVoiceListening]=useState(false);
+ const [attachments,setAttachments]=useState<Attachment[]>([]),[thinking,setThinking]=useState<"standard"|"deep">("standard");
+ const [voiceListening,setVoiceListening]=useState(false);
  const selected=useMemo(()=>models.find(m=>m.id===model)??models[0],[model]);
  const filtered=useMemo(()=>tools.filter(t=>(t.name+" "+t.sub).toLowerCase().includes(search.toLowerCase())),[search]);
 
