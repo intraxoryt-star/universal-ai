@@ -97,3 +97,22 @@
 .history-actions svg{width:12px;height:12px}
 .answer-card header{gap:6px}
 @media(max-width:650px){.history-actions{opacity:1}.history-actions button{width:28px;height:28px}}
+
+
+/* Readable, safe Markdown response typography */
+.message-markdown{margin-top:14px;color:#d0d7e8;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+.message-markdown> :first-child{margin-top:0}
+.message-markdown> :last-child{margin-bottom:0}
+.message-markdown p{margin:0 0 12px}
+.message-markdown h3,.message-markdown h4,.message-markdown h5{margin:18px 0 8px;color:#f0f2ff;font-weight:750;line-height:1.35}
+.message-markdown h3{font-size:17px}.message-markdown h4{font-size:15px}.message-markdown h5{font-size:13px}
+.message-markdown ul,.message-markdown ol{margin:7px 0 14px;padding-left:23px}
+.message-markdown li{padding:2px 0}
+.message-markdown strong{color:#f3f4ff;font-weight:750}
+.message-markdown em{color:#dcd8ff}
+.message-markdown a{color:#aaa7ff;text-decoration:underline;text-underline-offset:3px}
+.message-markdown code{padding:2px 5px;border:1px solid #35415b;border-radius:5px;background:#0b1220;color:#c8c2ff;font: .9em ui-monospace,SFMono-Regular,monospace}
+.message-markdown .markdown-code{overflow:auto;margin:12px 0;padding:14px;border:1px solid #303c56;border-radius:10px;background:#080e19}
+.message-markdown .markdown-code code{display:block;padding:0;border:0;background:transparent;color:#d6def2;white-space:pre;font-size:11px;line-height:1.7}
+.message-markdown blockquote{margin:10px 0;padding:8px 13px;border-left:3px solid #8278e8;background:#1a2033;color:#bfc9df}
+.message-markdown hr{margin:15px 0;border:0;border-top:1px solid #303a51}
