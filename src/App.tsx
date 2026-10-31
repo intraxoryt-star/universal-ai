@@ -13,8 +13,6 @@ const MODELS: Model[] = [
   { id: "openai/gpt-oss-20b", name: "GPT-OSS 20B", tag: "Fast" },
   { id: "openai/gpt-oss-120b", name: "GPT-OSS 120B", tag: "Advanced" },
   { id: "qwen/qwen3.8-27b", name: "Qwen 3.8 27B", tag: "Reasoning" },
-  { id: "grok-4.7", name: "Grok 4.7", tag: "xAI" },
-  { id: "gemini-3.8-flash", name: "Gemini Flash", tag: "Google" },
 ];
 
 export default function App() {
@@ -32,8 +30,6 @@ export default function App() {
   const [answer, setAnswer] = useState("");
   const [compareAnswer, setCompareAnswer] = useState("");
   const [notice, setNotice] = useState("");
-  const [showTools, setShowTools] = useState(true);
-  const [toolNotice, setToolNotice] = useState("");
   const selectedModel = useMemo(() => MODELS.find((item) => item.id === model) ?? MODELS[0], [model]);
   const secondModel = useMemo(() => MODELS.find((item) => item.id === compareModel) ?? MODELS[1], [compareModel]);
 
@@ -137,40 +133,6 @@ export default function App() {
     </main>
   );
 
-  if (showTools) return (
-    <main className="tools-home">
-      <div className="tools-backdrop" />
-      <header className="tools-header">
-        <div className="tools-brand"><div className="brand-mark small"><Sparkles size={17} /></div><span>Universal AI</span></div>
-        <button className="tools-account" onClick={signOut}><div className="avatar">{(session.user.email ?? "U")[0].toUpperCase()}</div><LogOut size={15} /></button>
-      </header>
-      <section className="tools-content">
-        <div className="tools-eyebrow">YOUR PERSONAL AI WORKSPACE</div>
-        <h1>AI Tools</h1>
-        <p className="tools-subtitle">All your favourite AI tools, in one place.</p>
-        <div className="tools-grid">
-          {[
-            { name: "Claude", symbol: "✳", tone: "claude", state: "Coming soon", action: () => setToolNotice("Claude integration is not connected yet.") },
-            { name: "ChatGPT", symbol: "◎", tone: "chatgpt", state: "Ready", action: () => { setModel("openai/gpt-oss-20b"); setShowTools(false); setToolNotice(""); } },
-            { name: "Gemini", symbol: "✦", tone: "gemini", state: "Ready", action: () => { setModel("gemini-3.8-flash"); setShowTools(false); setToolNotice(""); } },
-            { name: "Perplexity", symbol: "◇", tone: "perplexity", state: "Coming soon", action: () => setToolNotice("Perplexity integration is not connected yet.") },
-            { name: "Grok", symbol: "𝕏", tone: "grok", state: "Ready", action: () => { setModel("grok-4.7"); setShowTools(false); setToolNotice(""); } },
-            { name: "Flow", symbol: "▶", tone: "flow", state: "External tool", action: () => window.open("https://labs.google/fx/tools/flow", "_blank", "noopener,noreferrer") },
-            { name: "Flow Music", symbol: "♫", tone: "flowmusic", state: "Coming soon", action: () => setToolNotice("Flow Music shortcut will be added after its destination is confirmed.") },
-          ].map((tool) => (
-            <button className="tool-tile" key={tool.name} onClick={tool.action}>
-              <span className={`tool-icon ${tool.tone}`}>{tool.symbol}</span>
-              <span className="tool-name">{tool.name}</span>
-              <span className={`tool-state ${tool.state === "Ready" ? "ready" : ""}`}>{tool.state}</span>
-            </button>
-          ))}
-        </div>
-        {toolNotice && <div className="tool-notice">{toolNotice}</div>}
-        <div className="tools-footer">One workspace. Multiple AI models.</div>
-      </section>
-    </main>
-  );
-
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -187,7 +149,7 @@ export default function App() {
 
       <main className="main-panel">
         <header className="topbar">
-          <div><div className="crumb">WORKSPACE <span>/</span> AI CHAT</div><h2>AI Chat</h2></div><button className="back-tools" onClick={() => setShowTools(true)}>← AI Tools</button>
+          <div><div className="crumb">WORKSPACE <span>/</span> AI CHAT</div><h2>AI Chat</h2></div>
           <div className="top-status"><span className="live-dot" /> Systems online</div>
         </header>
 
