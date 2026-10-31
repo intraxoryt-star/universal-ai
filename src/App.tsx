@@ -1,195 +1,82 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type KeyboardEvent } from "react";
 import { createClient, type Session } from "@supabase/supabase-js";
-import { ArrowUp, Bot, ChevronDown, CircleHelp, Cpu, LogOut, MessageSquare, Plus, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, ArrowUp, AudioLines, BookOpen, Bot, Check, ChevronDown, CircleHelp, Code2, Film, FileText, Gamepad2, Image as ImageIcon, LayoutGrid, LogOut, Menu, MessageSquare, Mic2, Plus, Search, Sparkles, WandSparkles, X, Zap } from "lucide-react";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
-
-type Role = "user" | "assistant";
-type ChatMessage = { role: Role; content: string };
-type Model = { id: string; name: string; tag: string };
-const MODELS: Model[] = [
-  { id: "openai/gpt-oss-20b", name: "GPT-OSS 20B", tag: "Fast" },
-  { id: "openai/gpt-oss-120b", name: "GPT-OSS 120B", tag: "Advanced" },
-  { id: "qwen/qwen3.8-27b", name: "Qwen 3.8 27B", tag: "Reasoning" },
+const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+const db = url && key ? createClient(url, key) : null;
+type Msg = { id:string; role:"user"|"assistant"; content:string; model_id?:string|null; created_at?:string };
+type Conv = { id:string; title:string; updated_at:string };
+const models = [
+  {id:"openai/gpt-oss-20b",name:"GPT-OSS 20B",provider:"Groq",tag:"Fast"},
+  {id:"openai/gpt-oss-120b",name:"GPT-OSS 120B",provider:"Groq",tag:"Advanced"},
+  {id:"qwen/qwen3.8-27b",name:"Qwen 3.8 27B",provider:"Groq",tag:"Reasoning"},
+  {id:"grok-4.7",name:"Grok 4.7",provider:"xAI",tag:"Latest"},
+  {id:"grok-4.6",name:"Grok 4.6",provider:"xAI",tag:"Fast"},
+  {id:"gemini-3.8-flash",name:"Gemini 3.8 Flash",provider:"Google",tag:"Fast"},
+  {id:"gemini-4-argon",name:"Gemini 4 Argon",provider:"Google",tag:"Advanced"},
 ];
+const tools = [
+  {name:"GPT Chat",sub:"Fast conversational AI",symbol:"◎",tone:"mint",model:"openai/gpt-oss-20b",state:"ready"},
+  {name:"Gemini",sub:"Google AI models",symbol:"✦",tone:"gemini",model:"gemini-3.8-flash",state:"ready"},
+  {name:"Grok",sub:"xAI assistant",symbol:"𝕏",tone:"grok",model:"grok-4.7",state:"ready"},
+  {name:"Claude",sub:"Anthropic assistant",symbol:"✳",tone:"claude",state:"soon"},
+  {name:"Perplexity",sub:"AI search workspace",symbol:"◇",tone:"perplexity",state:"soon"},
+  {name:"Flow",sub:"AI filmmaking",symbol:"▶",tone:"flow",state:"external"},
+];
+const shortcuts = [
+  {name:"Idea",desc:"Brainstorm & plan",icon:Sparkles,prompt:"Help me brainstorm and develop a strong idea."},
+  {name:"Book",desc:"Write & outline",icon:BookOpen,prompt:"Help me plan and write a book, starting with an outline."},
+  {name:"Game",desc:"Game concepts",icon:Gamepad2,prompt:"Help me design an original game concept."},
+  {name:"File",desc:"Work with docs",icon:FileText,prompt:"Help me organize and analyze a document."},
+  {name:"Code",desc:"Build & debug",icon:Code2,prompt:"Help me build or debug a software project."},
+];
+const nameOf=(id?:string|null)=>models.find(m=>m.id===id)?.name??"Universal AI";
 
-export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [authReady, setAuthReady] = useState(false);
-  const [email, setEmail] = useState("");
-  const [authBusy, setAuthBusy] = useState(false);
-  const [authNotice, setAuthNotice] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [draft, setDraft] = useState("");
-  const [model, setModel] = useState(MODELS[0].id);
-  const [compareModel, setCompareModel] = useState(MODELS[1].id);
-  const [compare, setCompare] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [answer, setAnswer] = useState("");
-  const [compareAnswer, setCompareAnswer] = useState("");
-  const [notice, setNotice] = useState("");
-  const selectedModel = useMemo(() => MODELS.find((item) => item.id === model) ?? MODELS[0], [model]);
-  const secondModel = useMemo(() => MODELS.find((item) => item.id === compareModel) ?? MODELS[1], [compareModel]);
+export default function App(){
+ const [session,setSession]=useState<Session|null>(null),[ready,setReady]=useState(false);
+ const [email,setEmail]=useState(""),[authBusy,setAuthBusy]=useState(false),[authNote,setAuthNote]=useState("");
+ const [page,setPage]=useState<"home"|"chat"|"tools">("home"),[menu,setMenu]=useState(false);
+ const [convs,setConvs]=useState<Conv[]>([]),[convId,setConvId]=useState<string|null>(null),[messages,setMessages]=useState<Msg[]>([]);
+ const [model,setModel]=useState(models[0].id),[compareModel,setCompareModel]=useState("gemini-3.8-flash"),[compare,setCompare]=useState(false);
+ const [draft,setDraft]=useState(""),[loading,setLoading]=useState(false),[notice,setNotice]=useState(""),[search,setSearch]=useState("");
+ const selected=useMemo(()=>models.find(m=>m.id===model)??models[0],[model]);
+ const filtered=useMemo(()=>tools.filter(t=>(t.name+" "+t.sub).toLowerCase().includes(search.toLowerCase())),[search]);
 
-  useEffect(() => {
-    if (!supabase) { setAuthReady(true); return; }
-    supabase.auth.getSession().then(({ data }) => { setSession(data.session); setAuthReady(true); });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession));
-    return () => listener.subscription.unsubscribe();
-  }, []);
+ useEffect(()=>{if(!db){setReady(true);return;} db.auth.getSession().then(({data})=>{setSession(data.session);setReady(true);});const {data:l}=db.auth.onAuthStateChange((_e,s)=>{setSession(s);if(!s){setConvs([]);setMessages([]);setConvId(null);setPage("home");}});return()=>l.subscription.unsubscribe();},[]);
+ useEffect(()=>{if(session?.user.id) void loadConvs();},[session?.user.id]);
+ async function loadConvs(){if(!db||!session)return;const {data,error}=await db.from("conversations").select("id,title,updated_at").eq("user_id",session.user.id).order("updated_at",{ascending:false}).limit(40);if(error){setNotice("Chat history unavailable: "+error.message);return;}setConvs((data??[]) as Conv[]);}
+ async function openConv(id:string){if(!db)return;const {data,error}=await db.from("messages").select("id,role,content,model_id,created_at").eq("conversation_id",id).order("created_at",{ascending:true});if(error){setNotice(error.message);return;}setConvId(id);setMessages((data??[]) as Msg[]);setPage("chat");setMenu(false);setNotice("");}
+ function newChat(){setConvId(null);setMessages([]);setDraft("");setNotice("");setPage("chat");setMenu(false);setCompare(false);}
+ async function signGoogle(){if(!db)return;setAuthBusy(true);const {error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:window.location.origin}});if(error)setAuthNote(error.message);setAuthBusy(false);}
+ async function signEmail(e:FormEvent){e.preventDefault();if(!db||!email.trim())return;setAuthBusy(true);const {error}=await db.auth.signInWithOtp({email:email.trim(),options:{emailRedirectTo:window.location.origin}});setAuthNote(error?error.message:"Sign-in link sent. Check your email.");setAuthBusy(false);}
+ async function send(e:FormEvent){e.preventDefault();const prompt=draft.trim();if(!prompt||!db||!session||loading)return;setLoading(true);setDraft("");setNotice("");setPage("chat");let id=convId;
+ try{
+  if(!id){const {data,error}=await db.from("conversations").insert({user_id:session.user.id,title:prompt.slice(0,64)}).select("id,title,updated_at").single();if(error||!data)throw new Error(error?.message??"Could not create chat.");id=data.id;setConvId(id);setConvs(c=>[data as Conv,...c]);}
+  const userMsg={role:"user" as const,content:prompt};const history=[...messages,{id:"pending-"+Date.now(),...userMsg}];setMessages(history);
+  const {error:saveErr}=await db.from("messages").insert({conversation_id:id,user_id:session.user.id,role:"user",content:prompt});if(saveErr)throw new Error("Could not save your message: "+saveErr.message);
+  const ask=async(mid:string)=>{const {data,error}=await db.functions.invoke("ai-chat",{body:{messages:history.map(m=>({role:m.role,content:m.content})),model:mid}});if(error)throw new Error(error.message);if(!data?.success||typeof data.reply!=="string")throw new Error(data?.details??data?.error??"AI request failed");return data.reply as string;};
+  let answers:{reply:string;mid:string}[]=[];
+  if(compare&&compareModel!==model){const pair=await Promise.allSettled([ask(model),ask(compareModel)]);if(pair[0].status==="fulfilled")answers.push({reply:pair[0].value,mid:model});if(pair[1].status==="fulfilled")answers.push({reply:pair[1].value,mid:compareModel});if(!answers.length)throw new Error("Both models failed. Check provider API keys.");if(pair.some(p=>p.status==="rejected"))setNotice("One model did not respond. Showing the available answer.");}
+  else answers=[{reply:await ask(model),mid:model}];
+  const rows=answers.map(a=>({conversation_id:id,user_id:session.user.id,role:"assistant",content:a.reply,model_id:a.mid}));
+  const {data:saved,error:saveAnswerErr}=await db.from("messages").insert(rows).select("id,role,content,model_id,created_at");
+  if(saveAnswerErr)throw new Error("AI answered, but saving failed: "+saveAnswerErr.message);
+  setMessages(m=>[...m,...(saved as Msg[])]);await db.from("conversations").update({updated_at:new Date().toISOString()}).eq("id",id);await loadConvs();
+ }catch(err){setNotice(err instanceof Error?err.message:"Something went wrong.");}finally{setLoading(false);}}
+ function launch(name:string){const t=tools.find(x=>x.name===name);if(!t)return;if(t.model){setModel(t.model);setPage("chat");setDraft("I'd like to explore "+name+". Help me get started.");setNotice("");}else if(t.state==="external"){window.open("https://labs.google/fx/tools/flow","_blank","noopener,noreferrer");}else setNotice(name+" integration is not connected yet.");}
+ function quick(prompt:string){setDraft(prompt);setPage("chat");setNotice("");}
 
-  async function signInGoogle() {
-    if (!supabase) return;
-    setAuthBusy(true); setAuthNotice("");
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin },
-    });
-    if (error) setAuthNotice(error.message);
-    setAuthBusy(false);
-  }
+ if(!ready)return <div className="boot-screen"><Sparkles/><span>Preparing your workspace…</span></div>;
+ if(!session)return <main className="login-page"><div className="login-orb orb-one"/><div className="login-orb orb-two"/><nav className="login-nav"><div className="brand-lockup"><span className="brand-symbol"><Sparkles size={19}/></span>Universal<span>AI</span></div><small>ONE WORKSPACE · MANY POSSIBILITIES</small></nav><section className="login-layout"><div className="login-copy"><div className="eyebrow">✦ YOUR CREATIVE AI HUB</div><h1>Make room for<br/><span>what’s possible.</span></h1><p>Chat with powerful AI models, explore creative tools, and bring your next idea to life — all from one connected workspace.</p><div className="login-points"><span><Check/> Multiple AI models</span><span><Check/> Side-by-side comparison</span><span><Check/> Private cloud chat history</span></div></div><section className="login-card"><div className="login-card-icon"><Sparkles/></div><small>WELCOME TO UNIVERSAL AI</small><h2>Your workspace<br/>starts here.</h2><p>Sign in to continue to your personal AI hub.</p>{!db&&<div className="auth-note">Supabase configuration is missing.</div>}<button className="google-login" onClick={signGoogle} disabled={!db||authBusy}><b>G</b> Continue with Google <ArrowRight/></button><div className="login-divider">OR CONTINUE WITH EMAIL</div><form onSubmit={signEmail}><label>Email address</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" required/><button disabled={!db||authBusy||!email.trim()}>Send secure sign-in link</button></form>{authNote&&<div className="auth-note">{authNote}</div>}<small className="secure-note"><Check/> Secure authentication powered by Supabase</small></section></section><footer className="login-footer">UNIVERSAL AI <span>BUILT FOR THE NEXT IDEA.</span></footer></main>;
 
-  async function signInEmail(event: FormEvent) {
-    event.preventDefault();
-    if (!supabase || !email.trim()) return;
-    setAuthBusy(true); setAuthNotice("");
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: window.location.origin },
-    });
-    setAuthNotice(error ? error.message : "Magic link sent. Check your email inbox.");
-    setAuthBusy(false);
-  }
+ const initials=(session.user.email??"U").slice(0,1).toUpperCase(),userLabel=session.user.email?.split("@")[0]??"there";
+ if(page==="chat")return <div className="workspace-shell"><aside className={"workspace-sidebar "+(menu?"mobile-open":"")}><div className="sidebar-top"><button className="brand-lockup" onClick={()=>setPage("home")}><span className="brand-symbol"><Sparkles/></span>Universal<span>AI</span></button><button className="icon-button sidebar-close" onClick={()=>setMenu(false)}><X/></button></div><button className="sidebar-new" onClick={newChat}><Plus/> New chat</button><div className="sidebar-section-label">WORKSPACE</div><button className="sidebar-link selected" onClick={()=>setPage("chat")}><MessageSquare/> AI Chat</button><button className="sidebar-link" onClick={()=>setPage("tools")}><LayoutGrid/> Explore tools <ArrowRight/></button><div className="history-heading">RECENT CHATS <button onClick={loadConvs}>↻</button></div><div className="history-list">{convs.map(c=><button className={"history-item "+(convId===c.id?"current":"")} key={c.id} onClick={()=>void openConv(c.id)}><MessageSquare/><span>{c.title}</span></button>)}{!convs.length&&<small>Your saved chats appear here.</small>}</div><div className="sidebar-bottom"><div className="sidebar-plan"><Zap/><span><b>Multi-model workspace</b><small>Groq · Gemini · xAI</small></span></div><button className="sidebar-account" onClick={()=>db?.auth.signOut()}><i>{initials}</i><span>{session.user.email}</span><LogOut/></button></div></aside>{menu&&<button className="mobile-scrim" onClick={()=>setMenu(false)}/>}<main className="chat-main"><header className="chat-topbar"><div className="chat-title-group"><button className="icon-button mobile-menu-button" onClick={()=>setMenu(true)}><Menu/></button><div><small>UNIVERSAL AI / WORKSPACE</small><h1>{convs.find(c=>c.id===convId)?.title??"AI Chat"}</h1></div></div><div className="chat-top-actions"><span><i/> All systems ready</span><button className="icon-button" onClick={()=>setPage("home")}><LayoutGrid/></button></div></header><section className={"chat-scroll "+(messages.length?"with-thread":"")}>{!messages.length?<div className="chat-welcome"><div className="welcome-kicker"><Sparkles/> YOUR AI, YOUR WORKFLOW</div><h2>What can we create<br/><span>together today?</span></h2><p>Ask anything, develop an idea, or compare different AI models.</p><div className="prompt-cards">{[{title:"Think through an idea",desc:"Turn a rough thought into a plan",icon:Sparkles,prompt:"Help me turn this rough idea into a clear, actionable plan."},{title:"Create something",desc:"Write, design, and brainstorm",icon:WandSparkles,prompt:"Help me create something original. Start by asking what I have in mind."},{title:"Build a project",desc:"Plan and solve technical problems",icon:Code2,prompt:"Help me plan a software project step by step."}].map(x=><button className="prompt-card" key={x.title} onClick={()=>setDraft(x.prompt)}><x.icon/><b>{x.title}</b><small>{x.desc}</small><ArrowRight/></button>)}</div></div>:<div className="chat-thread">{messages.map((m,i)=>{if(m.role==="assistant"&&messages[i-1]?.role==="assistant")return null;if(m.role==="user")return <div className="user-message" key={m.id}><i>{initials}</i><div><small>YOU</small><p>{m.content}</p></div></div>;const second=messages[i+1]?.role==="assistant"?messages[i+1]:null;return <div className="assistant-responses" key={m.id}><div className="assistant-brand"><Sparkles/><span>UNIVERSAL AI <small>{second?"MODEL COMPARISON":"AI RESPONSE"}</small></span></div><div className="answer-grid"><article className="answer-card"><header><span><Bot/>{nameOf(m.model_id)}</span><small>RESPONSE 01</small></header><p>{m.content}</p></article>{second&&<article className="answer-card"><header><span><Bot/>{nameOf(second.model_id)}</span><small>RESPONSE 02</small></header><p>{second.content}</p></article>}</div></div>;})}{loading&&<div className="loading-reply"><i/><i/><i/> {compare?"Comparing model responses…":selected.name+" is thinking…"}</div>}</div>}{notice&&<div className="chat-notice"><CircleHelp/>{notice}<button onClick={()=>setNotice("")}><X/></button></div>}</section><section className="chat-composer-area"><div className="model-controls"><label className="model-picker"><small>MODEL</small><select value={model} onChange={e=>setModel(e.target.value)}>{models.map(m=><option key={m.id} value={m.id}>{m.name} · {m.provider}</option>)}</select><ChevronDown/></label><label className="compare-switch"><input type="checkbox" checked={compare} onChange={e=>setCompare(e.target.checked)}/><i/> Compare models</label>{compare&&<label className="model-picker"><small>WITH</small><select value={compareModel} onChange={e=>setCompareModel(e.target.value)}>{models.filter(m=>m.id!==model).map(m=><option key={m.id} value={m.id}>{m.name}</option>)}</select><ChevronDown/></label>}</div><form className="message-composer" onSubmit={send}><textarea rows={2} value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={(e:KeyboardEvent<HTMLTextAreaElement>)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();e.currentTarget.form?.requestSubmit();}}} placeholder="Message Universal AI…"/><div className="composer-bottom"><span>Enter to send · Shift + Enter for new line</span><button disabled={!draft.trim()||loading}><ArrowUp/></button></div></form><p className="ai-disclaimer">AI can make mistakes. Verify important information. Comparison sends one request to each selected model.</p></section></main></div>;
 
-  async function signOut() {
-    await supabase?.auth.signOut();
-    setMessages([]); setAnswer(""); setCompareAnswer("");
-  }
-
-  async function sendMessage(event: FormEvent) {
-    event.preventDefault();
-    const prompt = draft.trim();
-    if (!prompt || !supabase || !session || loading) return;
-    const history = [...messages, { role: "user" as const, content: prompt }];
-    setMessages(history);
-    setDraft(""); setLoading(true); setNotice(""); setAnswer(""); setCompareAnswer("");
-
-    const request = async (chosenModel: string) => {
-      const { data, error } = await supabase!.functions.invoke("ai-chat", {
-        body: { messages: history, model: chosenModel },
-      });
-      if (error) throw new Error(error.message);
-      if (!data?.success || typeof data.reply !== "string") throw new Error(data?.error ?? "AI request failed");
-      return data as { reply: string; model_label?: string; fallback_used?: boolean };
-    };
-
-    try {
-      if (compare && compareModel !== model) {
-        const [first, second] = await Promise.allSettled([request(model), request(compareModel)]);
-        if (first.status === "fulfilled") setAnswer(first.value.reply);
-        if (second.status === "fulfilled") setCompareAnswer(second.value.reply);
-        const failures = [first, second].filter((item) => item.status === "rejected");
-        if (failures.length === 2) throw new Error("Both model requests failed. Please check your connection and try again.");
-        if (failures.length === 1) setNotice("One model did not respond. The other result is available.");
-        setMessages((current) => [...current, { role: "assistant", content: first.status === "fulfilled" ? first.value.reply : second.status === "fulfilled" ? second.value.reply : "No response." }]);
-      } else {
-        const result = await request(model);
-        setAnswer(result.reply);
-        setMessages((current) => [...current, { role: "assistant", content: result.reply }]);
-        if (result.fallback_used) setNotice("The selected model was unavailable; a backup model answered instead.");
-      }
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (!authReady) return <div className="center-screen"><div className="loader" /><span>Preparing your workspace…</span></div>;
-
-  if (!session) return (
-    <main className="auth-screen">
-      <div className="auth-glow" />
-      <section className="auth-card">
-        <div className="brand-mark"><Sparkles size={22} /></div>
-        <div className="eyebrow">ONE WORKSPACE. MULTIPLE MODELS.</div>
-        <h1>Meet your <span>Universal AI.</span></h1>
-        <p className="muted">A focused workspace to chat with powerful AI models and compare their answers side by side.</p>
-        {!supabase && <div className="alert">Setup required: add your Supabase URL and publishable key to the environment variables.</div>}
-        <button className="google-button" onClick={signInGoogle} disabled={!supabase || authBusy}>
-          <span className="google-g">G</span> Continue with Google
-        </button>
-        <div className="or"><span />OR<span /></div>
-        <form onSubmit={signInEmail} className="email-form">
-          <label htmlFor="email">Email address</label>
-          <input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <button className="primary-button" disabled={!supabase || authBusy || !email.trim()}>{authBusy ? "Please wait…" : "Send magic link"}</button>
-        </form>
-        {authNotice && <div className="notice">{authNotice}</div>}
-        <p className="fine-print">Secure sign-in powered by Supabase Auth.</p>
-      </section>
-    </main>
-  );
-
-  return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand"><div className="brand-mark small"><Sparkles size={18} /></div><span>Universal<span className="brand-light">AI</span></span></div>
-        <button className="new-chat" onClick={() => { setMessages([]); setAnswer(""); setCompareAnswer(""); setNotice(""); }}><Plus size={17} /> New chat</button>
-        <div className="side-label">WORKSPACE</div>
-        <div className="side-item active"><MessageSquare size={16} /> AI Chat</div>
-        <div className="side-item"><Cpu size={16} /> Model studio <span className="soon">SOON</span></div>
-        <div className="side-bottom">
-          <div className="plan-chip"><Zap size={15} /><div><b>Multi-model workspace</b><small>Powered by Groq</small></div></div>
-          <button className="account" onClick={signOut}><div className="avatar">{(session.user.email ?? "U")[0].toUpperCase()}</div><div className="account-copy"><b>{session.user.email ?? "Signed in"}</b><small>Sign out</small></div><LogOut size={15} /></button>
-        </div>
-      </aside>
-
-      <main className="main-panel">
-        <header className="topbar">
-          <div><div className="crumb">WORKSPACE <span>/</span> AI CHAT</div><h2>AI Chat</h2></div>
-          <div className="top-status"><span className="live-dot" /> Systems online</div>
-        </header>
-
-        <section className={`conversation ${messages.length ? "has-messages" : ""}`}>
-          {messages.length === 0 ? (
-            <div className="welcome">
-              <div className="welcome-icon"><Sparkles size={24} /></div>
-              <div className="eyebrow">YOUR AI WORKSPACE</div>
-              <h1>What are we <span>building</span> today?</h1>
-              <p>Ask a question, explore an idea, or compare two models to see different perspectives.</p>
-              <div className="suggestions">
-                {["Explain a complex topic simply", "Help me plan a new project", "Write and improve an idea"].map((item) => <button key={item} onClick={() => setDraft(item)}>{item}<ArrowUp size={14} /></button>)}
-              </div>
-            </div>
-          ) : (
-            <div className="thread">
-              {messages.map((item, index) => <div className={`message-row ${item.role}`} key={`${index}-${item.role}`}><div className="message-avatar">{item.role === "user" ? "U" : <Bot size={17} />}</div><div className="message-content"><div className="message-role">{item.role === "user" ? "YOU" : "UNIVERSAL AI"}</div><div className="message-text">{item.content}</div></div></div>)}
-              {(answer || compareAnswer) && <div className={`response-grid ${compare && compareAnswer ? "two" : ""}`}>
-                {answer && <article className="response-card"><div className="response-head"><span><Bot size={16} /> {selectedModel.name}</span><small>RESPONSE 01</small></div><div className="response-body">{answer}</div></article>}
-                {compareAnswer && <article className="response-card"><div className="response-head"><span><Bot size={16} /> {secondModel.name}</span><small>RESPONSE 02</small></div><div className="response-body">{compareAnswer}</div></article>}
-              </div>}
-              {loading && <div className="thinking"><span className="loader" /> {compare ? "Comparing model responses…" : "Thinking…"}</div>}
-            </div>
-          )}
-        </section>
-
-        <div className="composer-wrap">
-          {notice && <div className="notice inline-notice"><CircleHelp size={15} />{notice}</div>}
-          <div className="model-toolbar">
-            <label className="model-select"><span>MODEL</span><select value={model} onChange={(e) => setModel(e.target.value)}>{MODELS.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.tag}</option>)}</select><ChevronDown size={14} /></label>
-            <label className="compare-toggle"><input type="checkbox" checked={compare} onChange={(e) => setCompare(e.target.checked)} /><span className="toggle-ui" /><span>Compare models</span></label>
-            {compare && <label className="model-select second-select"><span>WITH</span><select value={compareModel} onChange={(e) => setCompareModel(e.target.value)}>{MODELS.filter((item) => item.id !== model).map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select><ChevronDown size={14} /></label>}
-          </div>
-          <form className="composer" onSubmit={sendMessage}>
-            <textarea value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(e as unknown as FormEvent); } }} placeholder="Message Universal AI…" rows={2} />
-            <div className="composer-foot"><span>↵ Enter to send · Shift + Enter for new line</span><button className="send-button" type="submit" disabled={!draft.trim() || loading}><ArrowUp size={18} /></button></div>
-          </form>
-          <div className="disclaimer">AI can make mistakes. Verify important information. Side-by-side mode uses two model requests.</div>
-        </div>
-      </main>
-    </div>
-  );
+ return <main className="hub-page"><header className="hub-header"><button className="brand-lockup" onClick={()=>setPage("home")}><span className="brand-symbol"><Sparkles/></span>Universal<span>AI</span></button><nav><button className={page==="home"?"active":""} onClick={()=>setPage("home")}>Home</button><button className={page==="tools"?"active":""} onClick={()=>setPage("tools")}>AI Tools</button><button onClick={()=>setPage("chat")}>AI Chat</button></nav><div className="hub-user"><button className="hub-chat-button" onClick={newChat}><Plus/> New chat</button><button className="user-avatar" onClick={()=>db?.auth.signOut()}>{initials}</button></div></header><div className="hub-content"><section className="hub-intro"><div><small>✦ YOUR PERSONAL AI WORKSPACE</small><h1>Make something<br/><span>extraordinary.</span></h1><p>Good to see you, {userLabel}. Your next great idea starts here.</p></div><div className="intro-orbit"><div className="orbit-ring ring-a"/><div className="orbit-ring ring-b"/><div className="orbit-core"><Sparkles/></div><i><ImageIcon/></i><b><AudioLines/></b><em><Film/></em></div></section>
+ {page==="home"?<><section className="hero-feature"><div><small><Sparkles/> THE CREATIVE AI STUDIO</small><h2>Unlock the power<br/>of your imagination.</h2><p>Explore intelligent tools for ideas, content, code, and creativity — all in one place.</p><button onClick={()=>setPage("tools")}>Explore AI tools <ArrowRight/></button></div><div className="hero-art"><span className="art-panel panel-one"><ImageIcon/> IMAGE</span><span className="art-panel panel-two"><AudioLines/> VOICE</span><span className="art-panel panel-three"><Film/> VIDEO</span></div></section>
+ <section className="hub-section"><div className="section-heading"><div><small>CREATE WITH AI</small><h2>Creative studio</h2></div><button onClick={()=>setPage("tools")}>View all <ArrowRight/></button></div><div className="creative-grid"><button className="creative-card video-card" onClick={()=>setNotice("AI Video is not connected yet. Google Flow is available in AI Tools.")}><Film/><small>AI VIDEO</small><b>AI Video Maker</b><p>Bring your stories to life with AI video.</p><i>COMING SOON</i></button><button className="creative-card image-card" onClick={()=>setNotice("AI Image generation is not connected yet.")}><ImageIcon/><small>AI IMAGE</small><b>AI Image Studio</b><p>Turn a prompt into a visual concept.</p><i>COMING SOON</i></button><button className="creative-card voice-card" onClick={()=>setNotice("AI Voice is not connected to this workspace yet.")}><Mic2/><small>AI VOICE</small><b>AI Voice Lab</b><p>Create voice experiences and narration.</p><i>COMING SOON</i></button></div></section>
+ <section className="hub-section"><div className="section-heading"><div><small>START WITH A SPARK</small><h2>Quick launch</h2></div></div><div className="shortcut-row">{shortcuts.map(s=><button key={s.name} onClick={()=>quick(s.prompt)}><span><s.icon/></span><b>{s.name}</b><small>{s.desc}</small></button>)}</div></section>
+ <section className="hub-section"><div className="section-heading"><div><small>YOUR AI TOOLBOX</small><h2>Popular AI tools</h2></div><button onClick={()=>setPage("tools")}>View all <ArrowRight/></button></div><div className="popular-grid">{tools.slice(0,4).map(t=><button className="popular-card" key={t.name} onClick={()=>launch(t.name)}><span className={"popular-icon "+t.tone}>{t.symbol}</span><span><b>{t.name}</b><small>{t.sub}</small></span><i className={t.state}>{t.state==="ready"?"READY":"SOON"}</i></button>)}</div></section>
+ <section className="hub-section"><div className="section-heading"><div><small>EXPLORE WHAT'S POSSIBLE</small><h2>Creative inspiration</h2></div><span className="preview-tag">PREVIEW</span></div><div className="inspiration-grid"><button className="inspiration-card inspiration-video" onClick={()=>setNotice("Video generation preview. Connect a video provider to enable it.")}><Film/><b>Imagine your next film</b><small>AI video workspace · Coming soon</small></button><button className="inspiration-card inspiration-image" onClick={()=>setNotice("Image generation preview. Connect an image provider to enable it.")}><ImageIcon/><b>Visualize a new world</b><small>AI image workspace · Coming soon</small></button><button className="inspiration-card inspiration-audio" onClick={()=>setNotice("Voice generation preview. Provider integration pending.")}><AudioLines/><b>Give ideas a voice</b><small>AI voice workspace · Coming soon</small></button></div></section></>:<section className="hub-section all-tools-page"><div className="section-heading"><div><small>DISCOVER YOUR WORKSPACE</small><h2>Explore AI tools</h2><p>Choose a connected model or explore upcoming creative tools.</p></div></div><label className="tool-search"><Search/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search AI tools…"/></label><div className="all-tools-grid">{filtered.map(t=><button key={t.name} onClick={()=>launch(t.name)}><span className={"popular-icon "+t.tone}>{t.symbol}</span><span><b>{t.name}</b><small>{t.sub}</small></span><i className={t.state}>{t.state==="ready"?"READY":t.state==="external"?"OPEN":"COMING SOON"}</i><ArrowRight/></button>)}</div><div className="section-heading upcoming"><div><small>COMING INTO FOCUS</small><h2>Creative tools</h2></div></div><div className="creative-grid"><div className="creative-card video-card"><Film/><small>VIDEO</small><b>AI Video Maker</b><p>Generate cinematic video from prompts.</p><i>IN DEVELOPMENT</i></div><div className="creative-card image-card"><ImageIcon/><small>IMAGE</small><b>AI Image Studio</b><p>Create original visuals with AI.</p><i>IN DEVELOPMENT</i></div><div className="creative-card voice-card"><Mic2/><small>VOICE</small><b>AI Voice Lab</b><p>Explore speech and narration workflows.</p><i>IN DEVELOPMENT</i></div></div></section>}{notice&&<div className="hub-toast"><CircleHelp/>{notice}<button onClick={()=>setNotice("")}><X/></button></div>}</div><footer className="hub-footer"><span>© 2026 UNIVERSAL AI</span><span>ONE WORKSPACE. MANY POSSIBILITIES.</span><button onClick={()=>db?.auth.signOut()}><LogOut/> Sign out</button></footer></main>;
 }
