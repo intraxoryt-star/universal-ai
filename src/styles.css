@@ -83,3 +83,17 @@
 .read-aloud svg{width:13px;height:13px}
 .voice-active{border-color:#d18b77!important;background:#422a35!important;color:#ffd0c1!important;animation:voicePulse 1.1s infinite alternate}
 @keyframes voicePulse{to{box-shadow:0 0 0 3px #d18b7722}}
+
+
+/* Chat history management actions */
+.history-row{display:flex;align-items:center;gap:4px;min-width:0;border-radius:8px}
+.history-row.current,.history-row:hover{background:#19233a}
+.history-row .history-item{flex:1;min-width:0;background:transparent}
+.history-actions{display:flex;align-items:center;gap:2px;padding-right:4px;opacity:0;transition:opacity .15s}
+.history-row:hover .history-actions,.history-row:focus-within .history-actions{opacity:1}
+.history-actions button{width:25px;height:25px;display:grid;place-items:center;border:0;border-radius:6px;background:transparent;color:#8492aa;cursor:pointer}
+.history-actions button:hover{background:#303b57;color:#eef2ff}
+.history-actions button:last-child:hover{background:#482d3a;color:#ffb8c5}
+.history-actions svg{width:12px;height:12px}
+.answer-card header{gap:6px}
+@media(max-width:650px){.history-actions{opacity:1}.history-actions button{width:28px;height:28px}}
