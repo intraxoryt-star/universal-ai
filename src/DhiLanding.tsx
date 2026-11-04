@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import {
-  ArrowRight, ArrowUpRight, AudioLines, BrainCircuit, Check, ChevronDown,
+  ArrowRight, ArrowUpRight, AudioLines, BrainCircuit, Check,
   CircleDot, Cpu, Database, Eye, Globe2, Layers3, LockKeyhole, Menu,
-  Mic2, Network, Play, Rocket, ShieldCheck, Sparkles, Video, X, Zap
+  Network, ShieldCheck, Sparkles, Video, X, Zap
 } from "lucide-react";
 
 const models = [
