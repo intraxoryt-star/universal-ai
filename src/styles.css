@@ -147,3 +147,76 @@
 @media(max-width:680px){.dhi-topline{height:27px;padding:0 15px;font-size:6px;letter-spacing:1px}.dhi-topline span:last-child{display:none}.dhi-header{height:65px;padding:0 16px}.dhi-brand>span:last-child{font-size:16px}.dhi-brand small{font-size:6px}.dhi-mark{width:37px;height:37px}.dhi-mobile-toggle{display:grid}.dhi-header nav{position:absolute;top:64px;left:0;right:0;display:none;flex-direction:column;align-items:stretch;gap:0;padding:10px 16px 16px;border-bottom:1px solid #ffffff18;background:#0a121e}.dhi-header nav.open{display:flex}.dhi-header nav>a{padding:13px 8px;border-bottom:1px solid #ffffff0c}.dhi-header nav .dhi-nav-cta{margin-top:9px;justify-content:center}.dhi-hero{min-height:0;display:flex;flex-direction:column;align-items:stretch;padding:68px 21px 72px}.dhi-hero h1{font-size:53px;letter-spacing:-3px;margin:22px 0 17px}.dhi-hero-lead{font-size:12px;line-height:1.8}.dhi-hero-actions{gap:8px;flex-wrap:wrap}.dhi-button{min-height:42px;padding:0 12px;font-size:9px}.dhi-hero-note{flex-wrap:wrap;margin-top:25px;font-size:8px}.dhi-hero-visual{height:290px;margin:15px -30px 0;transform:scale(.83)}.orbit-one{width:330px}.orbit-two{width:280px;height:280px}.orbit-three{width:360px}.dhi-core-symbol{width:110px;height:110px}.dhi-core-symbol .dhi-mark{width:80px;height:80px}.dhi-node{min-width:95px;padding:8px}.dhi-node span{font-size:6px}.node-a{left:7%;top:25px}.node-b{right:4%;top:55px}.node-c{left:2%;bottom:56px}.node-d{right:4%;bottom:30px}.dhi-visual-caption{bottom:-4px;font-size:6px}.dhi-hero-bottom{left:21px;right:21px;height:45px;font-size:6px}.dhi-hero-bottom span:nth-child(2){display:none}.dhi-manifesto,.dhi-capabilities,.dhi-models,.dhi-architecture,.dhi-roadmap,.dhi-principles,.dhi-preview,.dhi-compute,.dhi-investment{padding:67px 21px}.dhi-manifesto{display:block}.dhi-manifesto-content{margin-top:28px}.dhi-manifesto-content h2,.dhi-section-heading h2,.dhi-compute-heading h2,.dhi-investment h2,.dhi-principles h2{font-size:36px;letter-spacing:-1.5px}.dhi-mission-grid{grid-template-columns:1fr;gap:12px;margin-top:30px}.dhi-mission-grid article{padding-bottom:10px;border-bottom:1px solid #ffffff12}.dhi-section-heading{display:block;margin-bottom:28px}.dhi-heading-aside{max-width:100%;margin-top:15px}.dhi-capability-grid{grid-template-columns:1fr 1fr}.dhi-capability{min-height:180px;padding:15px}.dhi-capability h3{font-size:12px;margin-top:18px}.dhi-capability p{font-size:9px}.dhi-model-layout{grid-template-columns:1fr}.dhi-model-option{min-height:70px;padding:12px;gap:9px}.dhi-model-option-copy b{font-size:11px}.dhi-model-stage{font-size:7px}.dhi-model-detail{padding:16px}.dhi-preview{grid-template-columns:1fr;gap:25px}.dhi-preview h2,.dhi-final-cta h2{font-size:40px}.dhi-playground{padding:13px}.dhi-playground-model{flex-wrap:wrap}.dhi-coming-tag{font-size:6px}.dhi-stack-row{gap:10px;padding:13px}.dhi-stack-row b{font-size:10px}.dhi-stack-row small{font-size:8px;line-height:1.5}.dhi-stack-grid{gap:6px}.dhi-stack-grid article{padding:10px;grid-template-columns:19px 1fr}.dhi-stack-grid b{font-size:9px}.dhi-stack-grid small{font-size:7px}.dhi-architecture-foot{justify-content:flex-start;gap:11px}.dhi-architecture-foot span{font-size:7px}.dhi-compute-cards{grid-template-columns:1fr}.dhi-gpu-band{align-items:flex-start;flex-direction:column}.dhi-gpu-band b{font-size:13px}.dhi-timeline{grid-template-columns:1fr}.dhi-phase:nth-child(odd){border-right:0;padding-right:0}.dhi-phase:nth-child(even){padding-left:0}.dhi-investment-layout{grid-template-columns:1fr;gap:28px}.dhi-budget-number{font-size:45px}.dhi-principles{display:block}.dhi-principle-grid{margin-top:25px;grid-template-columns:1fr 1fr;gap:8px}.dhi-principle-grid article{padding:12px}.dhi-final-cta{min-height:390px}.dhi-footer{padding:25px 18px 18px}.dhi-footer-links{flex-wrap:wrap;gap:14px}.dhi-footer-bottom{flex-wrap:wrap;font-size:6px}.dhi-footer-bottom span:nth-child(2){display:none}}
 @media(prefers-reduced-motion:reduce){.dhi-site *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 html{scroll-behavior:smooth;scroll-padding-top:90px}
+
+
+/* DHI AI — future-facing launch experience */
+.dhi-site{position:relative;isolation:isolate;overflow:hidden;background:#050a12}
+.dhi-site:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.16;background-image:linear-gradient(#7ec9e90a 1px,transparent 1px),linear-gradient(90deg,#7ec9e90a 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(to bottom,black,transparent 82%)}
+.dhi-site:after{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E")}
+.dhi-topline{background:#060c14;border-bottom:1px solid #8edcf01b;color:#8ca8b8}
+.dhi-topline i,.dhi-eyebrow>span:first-child{box-shadow:0 0 12px #62d9f2;background:#70e0f1}
+.dhi-header{position:sticky;top:0;z-index:30;background:#07111be8;border-bottom:1px solid #9bdff01c;backdrop-filter:blur(22px);box-shadow:0 10px 40px #0003}
+.dhi-brand{transition:transform .25s ease}.dhi-brand:hover{transform:translateY(-2px)}
+.dhi-mark{background:linear-gradient(145deg,#142f45,#0a1827);border:1px solid #8bdcf04d;box-shadow:0 0 28px #36b8df20}
+.dhi-mark svg{filter:drop-shadow(0 0 7px #60cce755)}
+.dhi-brand>span:last-child{letter-spacing:.02em}
+.dhi-header nav>a{transition:color .2s ease,background .2s ease,border-color .2s ease}
+.dhi-header nav>a:hover{color:#d8f6ff}
+.dhi-header nav .dhi-nav-cta{border:1px solid #6bc9e65c;background:linear-gradient(110deg,#16354a,#15263d);box-shadow:inset 0 1px #ffffff13,0 0 24px #43b9df14}
+.dhi-hero{min-height:710px;position:relative;background:radial-gradient(ellipse at 72% 48%,#0e526b55,transparent 36%),radial-gradient(ellipse at 12% 20%,#28245b55,transparent 36%),linear-gradient(120deg,#060c15,#091522 54%,#07101a)}
+.dhi-hero:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#06101a 0%,transparent 62%),linear-gradient(0deg,#07101a 0%,transparent 22%)}
+.dhi-hero-grid{opacity:.5;background-image:linear-gradient(#9de8ff0b 1px,transparent 1px),linear-gradient(90deg,#9de8ff0b 1px,transparent 1px);background-size:54px 54px;mask-image:radial-gradient(ellipse at 70% 45%,black,transparent 72%)}
+.dhi-hero-copy,.dhi-hero-visual,.dhi-hero-bottom{z-index:2}
+.dhi-hero h1{font-size:clamp(60px,7vw,98px);line-height:.99;letter-spacing:-.075em;text-shadow:0 12px 60px #0008}
+.dhi-hero h1 em{background:linear-gradient(105deg,#9a9bff 4%,#78d9f2 52%,#e1f8ff 95%);background-clip:text;color:transparent;text-shadow:none}
+.dhi-hero-lead{max-width:540px;font-size:15px;line-height:1.9;color:#a9c0d1}
+.dhi-button{min-height:49px;border-radius:7px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.dhi-button:hover{transform:translateY(-3px)}
+.dhi-button.primary{background:linear-gradient(105deg,#9a8cff,#56c8e8);color:#07121e;box-shadow:0 10px 32px #6f9bff35,inset 0 1px #ffffffa8}
+.dhi-button.primary:hover{box-shadow:0 14px 40px #6fbcff55}
+.dhi-button.secondary{border-color:#8dd8ef45;background:#ffffff08}
+.dhi-hero-note{border-color:#6bc8e52b;background:#0c1b2a9c;backdrop-filter:blur(10px)}
+.dhi-hero-visual{filter:drop-shadow(0 25px 65px #0008)}
+.dhi-orbit{border-color:#74d5f22b;box-shadow:0 0 35px #39a9d51a,inset 0 0 35px #39a9d50a}
+.orbit-one{animation:dhiOrbit 28s linear infinite}.orbit-two{animation:dhiOrbit 36s linear infinite reverse}.orbit-three{animation:dhiOrbit 44s linear infinite}
+@keyframes dhiOrbit{to{transform:rotate(360deg)}}
+.dhi-glow{background:radial-gradient(circle,#54d7f1 0%,#5968d7 27%,#143e67 55%,transparent 72%);filter:blur(18px);opacity:.55;animation:dhiPulse 5s ease-in-out infinite}
+@keyframes dhiPulse{0%,100%{transform:scale(.88);opacity:.38}50%{transform:scale(1.12);opacity:.7}}
+.dhi-core-symbol{border:1px solid #a0edff66;background:linear-gradient(145deg,#183e58,#101d3d);box-shadow:0 0 0 14px #67d6f20b,0 0 90px #48c9ef55,inset 0 1px #ffffff3d}
+.dhi-node{border-color:#74cde94d;background:#0b1b2bd9;box-shadow:0 12px 35px #0006,0 0 24px #48c5e51b;backdrop-filter:blur(14px);transition:transform .25s ease,border-color .25s ease}
+.dhi-node:hover{transform:translateY(-5px);border-color:#9cecff}
+.dhi-node svg{color:#9ce8fa}
+.dhi-manifesto,.dhi-capabilities,.dhi-models,.dhi-preview,.dhi-architecture,.dhi-compute,.dhi-roadmap,.dhi-investment,.dhi-principles{position:relative}
+.dhi-section-label{color:#80cde4}
+.dhi-kicker{color:#82b8d1}
+.dhi-manifesto-content h2,.dhi-section-heading h2,.dhi-compute-heading h2,.dhi-investment h2,.dhi-principles h2,.dhi-preview h2{letter-spacing:-.065em}
+.dhi-manifesto-content h2 span,.dhi-section-heading h2 span,.dhi-compute-heading h2 span,.dhi-investment h2 span,.dhi-principles h2 span,.dhi-preview h2 span{background:linear-gradient(100deg,#a2a0ff,#79d8f1);background-clip:text;color:transparent}
+.dhi-mission-grid article,.dhi-capability,.dhi-model-option,.dhi-model-detail,.dhi-playground,.dhi-stack-row,.dhi-stack-grid article,.dhi-compute-cards article,.dhi-principle-grid article{border-color:#6b9ab52c;box-shadow:0 12px 40px #0002;transition:transform .25s ease,border-color .25s ease,background .25s ease}
+.dhi-mission-grid article:hover,.dhi-capability:hover,.dhi-compute-cards article:hover,.dhi-principle-grid article:hover{transform:translateY(-4px);border-color:#79d4ed88}
+.dhi-capability{background:linear-gradient(145deg,#112437,#0b1724)}
+.dhi-capability>svg,.dhi-cap-top svg{color:#9adff1}
+.dhi-cap-line{background:linear-gradient(90deg,#9c8cff,#65d8ee);width:48px}
+.dhi-models{background:radial-gradient(ellipse at 90% 50%,#24617a35,transparent 35%),#091521}
+.dhi-model-option.active{border-color:#81d9ef;background:linear-gradient(110deg,#1a4056,#10263a);box-shadow:inset 3px 0 #8fe8fb,0 0 30px #40b5db1b}
+.dhi-model-detail{background:radial-gradient(ellipse at 50% 25%,#20536c55,transparent 55%),linear-gradient(145deg,#132b3e,#0b1724)}
+.dhi-model-orb{background:linear-gradient(145deg,#205c78,#1a2450);box-shadow:0 0 55px #58c9e75a}
+.dhi-chip,.dhi-tags span{border-color:#6a9cb14d}
+.dhi-preview{background:radial-gradient(ellipse at 83% 48%,#225d7733,transparent 38%),linear-gradient(110deg,#08131f,#0c1b2a)}
+.dhi-playground{border-color:#77d3ee55;background:linear-gradient(145deg,#101f30,#091521);box-shadow:0 28px 90px #0008,0 0 45px #38a8d51a}
+.dhi-playground form{border-color:#75bad04a;background:#0a1826}
+.dhi-playground-bottom button{background:linear-gradient(105deg,#a69aff,#70d9ed);box-shadow:0 8px 24px #68bce733}
+.dhi-stack-row{background:linear-gradient(100deg,#122d42,#0c1927)}
+.stack-product{border-color:#7acde88a;background:linear-gradient(100deg,#19465d,#10283c);box-shadow:0 0 35px #3ca9d31a}
+.dhi-stack-grid article{background:linear-gradient(145deg,#122638,#0c1825)}
+.dhi-compute-cards article{background:linear-gradient(145deg,#142a3d,#0c1825)}
+.dhi-gpu-band{border-color:#70c7e25c;background:linear-gradient(100deg,#17364b,#102235)}
+.dhi-phase-marker span{box-shadow:0 0 20px #4bb5d62a}
+.dhi-budget-row i{background:linear-gradient(90deg,#8d87ff,#6bdcf0)}
+.dhi-final-cta{background:radial-gradient(ellipse at center,#1b5068 0%,#12283a 32%,#08131f 75%)}
+.dhi-final-cta .dhi-coming-large{background:linear-gradient(110deg,#173e54,#182b47);border-color:#7cd5ed77;box-shadow:0 0 35px #4cbfe52b}
+.dhi-footer{border-top:1px solid #8bdcf01c}
+.dhi-footer-bottom a{color:#9bdff0}
+.dhi-mobile-toggle{border-color:#6ba9c34d;background:#0e2030;color:#c3f2ff}
+@media(max-width:900px){.dhi-hero{min-height:650px}.dhi-hero h1{font-size:clamp(56px,7vw,76px)}}
+@media(max-width:680px){.dhi-hero{min-height:0}.dhi-hero h1{font-size:clamp(49px,14vw,65px)}.dhi-hero:after{background:linear-gradient(0deg,#07101a 0%,transparent 40%)}.dhi-hero-visual{filter:drop-shadow(0 15px 35px #0008)}.dhi-node{box-shadow:0 8px 25px #0008}.dhi-capability:hover,.dhi-compute-cards article:hover,.dhi-principle-grid article:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.dhi-orbit,.dhi-glow{animation:none!important}}
