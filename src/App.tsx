@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { createClient, type Session } from "@supabase/supabase-js";
 import { ArrowRight, ArrowUp, AudioLines, BookOpen, Bot, Check, ChevronDown, CircleHelp, Code2, Film, FileText, Gamepad2, Image as ImageIcon, LayoutGrid, LogOut, Menu, MessageSquare, Mic2, Mic, Volume2, Plus, Search, Sparkles, WandSparkles, X, Zap, Paperclip, BrainCircuit, FileUp, Pencil, Trash2, Copy } from "lucide-react";
+import DhiLanding from "./DhiLanding";
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
@@ -50,7 +51,7 @@ function renderMarkdown(source:string):ReactNode[]{
  return out;
 }
 
-export default function App(){
+function LegacyApp(){
  const [session,setSession]=useState<Session|null>(null),[ready,setReady]=useState(false);
  const [email,setEmail]=useState(""),[authBusy,setAuthBusy]=useState(false),[authNote,setAuthNote]=useState("");
  const [page,setPage]=useState<"home"|"chat"|"tools">("home"),[menu,setMenu]=useState(false);
@@ -115,4 +116,10 @@ export default function App(){
  <section className="hub-section"><div className="section-heading"><div><small>START WITH A SPARK</small><h2>Quick launch</h2></div></div><div className="shortcut-row">{shortcuts.map(s=><button key={s.name} onClick={()=>quick(s.prompt)}><span><s.icon/></span><b>{s.name}</b><small>{s.desc}</small></button>)}</div></section>
  <section className="hub-section"><div className="section-heading"><div><small>YOUR AI TOOLBOX</small><h2>Popular AI tools</h2></div><button onClick={()=>setPage("tools")}>View all <ArrowRight/></button></div><div className="popular-grid">{tools.slice(0,4).map(t=><button className="popular-card" key={t.name} onClick={()=>launch(t.name)}><span className={"popular-icon "+t.tone}>{t.symbol}</span><span><b>{t.name}</b><small>{t.sub}</small></span><i className={t.state}>{t.state==="ready"?"READY":"SOON"}</i></button>)}</div></section>
  <section className="hub-section"><div className="section-heading"><div><small>EXPLORE WHAT'S POSSIBLE</small><h2>Creative inspiration</h2></div><span className="preview-tag">PREVIEW</span></div><div className="inspiration-grid"><button className="inspiration-card inspiration-video" onClick={()=>setNotice("Video generation preview. Connect a video provider to enable it.")}><Film/><b>Imagine your next film</b><small>AI video workspace · Coming soon</small></button><button className="inspiration-card inspiration-image" onClick={()=>setNotice("Image generation preview. Connect an image provider to enable it.")}><ImageIcon/><b>Visualize a new world</b><small>AI image workspace · Coming soon</small></button><button className="inspiration-card inspiration-audio" onClick={()=>setNotice("Voice generation preview. Provider integration pending.")}><AudioLines/><b>Give ideas a voice</b><small>AI voice workspace · Coming soon</small></button></div></section></>:<section className="hub-section all-tools-page"><div className="section-heading"><div><small>DISCOVER YOUR WORKSPACE</small><h2>Explore AI tools</h2><p>Choose a connected model or explore upcoming creative tools.</p></div></div><label className="tool-search"><Search/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search AI tools…"/></label><div className="all-tools-grid">{filtered.map(t=><button key={t.name} onClick={()=>launch(t.name)}><span className={"popular-icon "+t.tone}>{t.symbol}</span><span><b>{t.name}</b><small>{t.sub}</small></span><i className={t.state}>{t.state==="ready"?"READY":t.state==="external"?"OPEN":"COMING SOON"}</i><ArrowRight/></button>)}</div><div className="section-heading upcoming"><div><small>COMING INTO FOCUS</small><h2>Creative tools</h2></div></div><div className="creative-grid"><div className="creative-card video-card"><Film/><small>VIDEO</small><b>AI Video Maker</b><p>Generate cinematic video from prompts.</p><i>IN DEVELOPMENT</i></div><div className="creative-card image-card"><ImageIcon/><small>IMAGE</small><b>AI Image Studio</b><p>Create original visuals with AI.</p><i>IN DEVELOPMENT</i></div><div className="creative-card voice-card"><Mic2/><small>VOICE</small><b>AI Voice Lab</b><p>Explore speech and narration workflows.</p><i>IN DEVELOPMENT</i></div></div></section>}{notice&&<div className="hub-toast"><CircleHelp/>{notice}<button onClick={()=>setNotice("")}><X/></button></div>}</div><footer className="hub-footer"><span>© 2026 UNIVERSAL AI</span><span>ONE WORKSPACE. MANY POSSIBILITIES.</span><button onClick={()=>db?.auth.signOut()}><LogOut/> Sign out</button></footer></main>;
+}
+
+
+// The public root is the DHI AI launch page. The existing Universal AI workspace remains available at /app.
+export default function App(){
+  return window.location.pathname === "/app" ? <LegacyApp /> : <DhiLanding />;
 }
