@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   ArrowRight, ArrowUpRight, AudioLines, BrainCircuit, Check,
-  ChevronDown, Clock3, Layers3, Menu, MessageSquare, ShieldCheck, Sparkles, X
+  Clock3, Layers3, Menu, MessageSquare, ShieldCheck, Sparkles, X
 } from "lucide-react";
 import "./DhiLaunch.css";
 
