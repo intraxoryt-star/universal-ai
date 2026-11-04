@@ -1,159 +1,96 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import {
   ArrowRight, ArrowUpRight, AudioLines, BrainCircuit, Check,
-  CircleDot, Cpu, Database, Eye, Globe2, Layers3, LockKeyhole, Menu,
-  Network, ShieldCheck, Sparkles, Video, X, Zap
+  ChevronDown, Clock3, Layers3, Menu, MessageSquare, ShieldCheck, Sparkles, X
 } from "lucide-react";
+import "./DhiLaunch.css";
 
-const models = [
-  { id: "core", name: "DHI Core", size: "1–3B · V1", stage: "Research target", desc: "The first independently trained language foundation model, built to establish the training pipeline and multilingual foundations.", tags: ["Text", "Hindi", "English", "Bengali"] },
-  { id: "reason", name: "DHI Reason", size: "7–14B · V2", stage: "Planned", desc: "A next-generation model programme focused on deeper reasoning, coding, tool use and reliable instruction following.", tags: ["Reasoning", "Coding", "Tools", "Long context"] },
-  { id: "multimodal", name: "DHI Multimodal", size: "30–70B · V3 research", stage: "Long-term research", desc: "A research direction combining language with vision and audio, followed by video understanding as capabilities mature.", tags: ["Vision", "Audio", "Video research", "Multilingual"] },
-];
+const modelNames = ["GPT-OSS 20B", "GPT-OSS 120B", "Qwen 3.8 27B"];
 
-const pillars = [
-  { icon: BrainCircuit, title: "Foundation models", text: "Independently trained model weights, original research and a reproducible training pipeline." },
-  { icon: Eye, title: "Vision intelligence", text: "A roadmap for image, chart and document understanding through specialist vision systems." },
-  { icon: AudioLines, title: "Speech and audio", text: "Speech understanding, multilingual audio workflows and natural voice research." },
-  { icon: Video, title: "Video understanding", text: "Long-term research into temporal understanding, scenes and multimodal video context." },
-  { icon: Network, title: "Reasoning and agents", text: "Structured reasoning, coding, tool use and controlled task execution." },
-  { icon: ShieldCheck, title: "Responsible AI", text: "Privacy, security, evaluation, transparency and dataset provenance built into development." },
-];
-
-const phases = [
-  { time: "01–03 months", title: "Research foundation", desc: "Architecture specification, research leadership, compute feasibility, dataset governance and training pipeline design.", deliverable: "Technical feasibility report" },
-  { time: "04–08 months", title: "First research prototype", desc: "Tokenizer, data pipeline, small-scale pre-training experiments, reproducibility and benchmark baselines.", deliverable: "First independently trained prototype" },
-  { time: "09–14 months", title: "DHI Core V1", desc: "Target a 1–3B language model, instruction tuning, multilingual evaluation and safety testing.", deliverable: "V1 research release, subject to quality gates" },
-  { time: "15–21 months", title: "DHI Core V2", desc: "Target a 7–14B generation, improve reasoning and coding, and advance vision and audio research.", deliverable: "Next-generation research model" },
-  { time: "22–28 months", title: "Global product preview", desc: "Developer API, web and mobile experiences, regional inference design and security reviews.", deliverable: "Controlled product launch target" },
-  { time: "29–36 months", title: "Scale and improve", desc: "Larger-model experiments, video understanding research, reliability improvements and global ecosystem development.", deliverable: "V3 research programme" },
-];
-
-function Mark({ small = false }: { small?: boolean }) {
-  return <span className={"dhi-mark" + (small ? " small" : "")} aria-hidden="true">
-    <svg viewBox="0 0 48 48" fill="none">
-      <path d="M24 4.5 41 14.2v19.6L24 43.5 7 33.8V14.2L24 4.5Z" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="m15.5 31 8.5-17 8.5 17M19.5 25h9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="24" cy="4.5" r="2" fill="#67D5E8"/>
-      <circle cx="41" cy="33.8" r="2" fill="#67D5E8"/>
-      <circle cx="7" cy="33.8" r="2" fill="#67D5E8"/>
-    </svg>
-  </span>;
+function BrandMark() {
+  return <span className="launch-mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path d="M20 3.5 35.5 12.3v15.4L20 36.5 4.5 27.7V12.3L20 3.5Z" stroke="currentColor" strokeWidth="1.5"/><path d="m12.5 27 7.5-15 7.5 15M16 21h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="20" cy="3.5" r="1.8" fill="#76DCEB"/></svg></span>;
 }
 
 export default function DhiLanding() {
-  const [activeModel, setActiveModel] = useState("core");
-  const [prompt, setPrompt] = useState("Explain how multilingual AI can support education in India.");
-  const [demoResult, setDemoResult] = useState("");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const selected = models.find((item) => item.id === activeModel) ?? models[0];
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
 
-  function showPreview(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!prompt.trim()) return;
-    setDemoResult("DHI Core is under development. This is an interactive interface preview only — no AI model has processed your prompt, and the text has not been sent to a server or saved.");
-  }
-
-  const closeMenu = () => setMobileOpen(false);
-
-  return <main className="dhi-site">
-    <div className="dhi-topline"><span><i /> INDEPENDENT AI RESEARCH INITIATIVE</span><span>INDIA ROOTED <b>·</b> GLOBALLY BUILT</span></div>
-    <header className="dhi-header">
-      <a className="dhi-brand" href="#top" onClick={closeMenu}><Mark/><span>DHI <b>AI</b><small>INTELLIGENCE WITHOUT BOUNDARIES</small></span></a>
-      <button className="dhi-mobile-toggle" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation">{mobileOpen ? <X/> : <Menu/>}</button>
-      <nav className={mobileOpen ? "open" : ""}>
-        <a href="#models" onClick={closeMenu}>Models</a><a href="#research" onClick={closeMenu}>Research</a><a href="#architecture" onClick={closeMenu}>Architecture</a><a href="#roadmap" onClick={closeMenu}>Roadmap</a>
-        <a className="dhi-nav-cta" href="#preview" onClick={closeMenu}>Explore preview <ArrowUpRight/></a>
+  return <main className="launch-site">
+    <header className="launch-header">
+      <a className="launch-brand" href="#top" onClick={closeMenu}><BrandMark/><span>DHI <b>AI</b><small>ONE INTELLIGENT WORKSPACE</small></span></a>
+      <button className="launch-menu-toggle" onClick={() => setMenuOpen(v => !v)} aria-label={menuOpen ? "Close menu" : "Open menu"}>{menuOpen ? <X/> : <Menu/>}</button>
+      <nav className={menuOpen ? "launch-nav open" : "launch-nav"}>
+        <a href="#features" onClick={closeMenu}>Features</a>
+        <a href="#how-it-works" onClick={closeMenu}>How it works</a>
+        <a href="#faq" onClick={closeMenu}>FAQ</a>
+        <a className="launch-nav-cta" href="/app" onClick={closeMenu}>Explore workspace <ArrowUpRight/></a>
       </nav>
     </header>
 
-    <section className="dhi-hero" id="top">
-      <div className="dhi-hero-grid" aria-hidden="true"/>
-      <div className="dhi-hero-copy">
-        <div className="dhi-eyebrow"><span/> BUILDING INDEPENDENT INTELLIGENCE <span className="dhi-eyebrow-line"/></div>
-        <h1>Intelligence<br/><em>without</em> boundaries.</h1>
-        <p className="dhi-hero-lead">An India-rooted AI research initiative building original foundation models and globally accessible intelligent technology.</p>
-        <div className="dhi-hero-actions"><a href="#research" className="dhi-button primary">Discover our vision <ArrowRight/></a><a href="#roadmap" className="dhi-button secondary">View the roadmap</a></div>
-        <div className="dhi-hero-note"><span className="dhi-status-dot"/> <b>COMING SOON</b><span>Research and product development are in progress.</span></div>
+    <section className="launch-hero" id="top">
+      <div className="launch-hero-glow" aria-hidden="true"/>
+      <div className="launch-hero-copy">
+        <div className="launch-eyebrow"><i/> INTRODUCING DHI AI <span>·</span> EARLY ACCESS</div>
+        <h1>Think clearly.<br/><em>Create freely.</em></h1>
+        <p className="launch-lead">A simpler AI workspace for conversations, ideas and problem-solving. Switch between available models, compare answers and keep your chats in one place.</p>
+        <div className="launch-actions"><a className="launch-button primary" href="/app">Explore the workspace <ArrowRight/></a><a className="launch-text-link" href="#features">See what you can do <span>↓</span></a></div>
+        <div className="launch-proofline"><span><Check/> Multiple model options</span><span><Check/> Side-by-side comparison</span><span><Check/> Saved conversations</span></div>
       </div>
-      <div className="dhi-hero-visual" aria-label="Abstract DHI AI intelligence network illustration">
-        <div className="dhi-orbit orbit-one"/><div className="dhi-orbit orbit-two"/><div className="dhi-orbit orbit-three"/>
-        <div className="dhi-glow"/>
-        <div className="dhi-core-symbol"><Mark/></div>
-        <div className="dhi-node node-a"><BrainCircuit/><span>REASONING</span></div>
-        <div className="dhi-node node-b"><Eye/><span>VISION</span></div>
-        <div className="dhi-node node-c"><AudioLines/><span>AUDIO</span></div>
-        <div className="dhi-node node-d"><Network/><span>RESEARCH</span></div>
-        <div className="dhi-visual-caption">A NEW GENERATION OF INTELLIGENCE <i>01 / 04</i></div>
+
+      <div className="launch-product" aria-label="Illustrative preview of the DHI AI workspace">
+        <div className="launch-product-top"><div className="launch-window-dots"><i/><i/><i/></div><span>DHI AI <b>/ WORKSPACE</b></span><span className="launch-preview-label">INTERFACE PREVIEW</span></div>
+        <div className="launch-product-body">
+          <aside className="launch-mini-sidebar"><div className="launch-mini-logo"><BrandMark/></div><span className="active"><MessageSquare/> Chat</span><span><Layers3/> Models</span><span><Clock3/> History</span><div className="launch-mini-user"><i>U</i><span>Workspace</span></div></aside>
+          <div className="launch-mini-chat">
+            <div className="launch-mini-greeting"><span><Sparkles/> YOUR AI WORKSPACE</span><h2>What would you<br/>like to work on?</h2><p>Start with a question, an idea or a task.</p></div>
+            <div className="launch-mini-message user"><span>YOU</span>Help me plan a new project.</div>
+            <div className="launch-mini-answer"><div><span className="launch-mini-avatar"><BrainCircuit/></span><b>DHI AI</b><small>MODEL RESPONSE</small></div><p>Let's turn your idea into a clear plan. We can start with the goal, key steps and what you need to get moving.</p></div>
+            <div className="launch-mini-composer"><span>Message DHI AI…</span><i><ArrowUpRight/></i></div>
+            <div className="launch-mini-foot">ILLUSTRATIVE UI · NOT A LIVE MODEL RESPONSE</div>
+          </div>
+        </div>
       </div>
-      <div className="dhi-hero-bottom"><span>01 — OUR AMBITION</span><span>ADVANCING AI THROUGH ORIGINAL RESEARCH</span><a href="#mission">SCROLL TO EXPLORE ↓</a></div>
+      <div className="launch-hero-bottom"><span>BUILT FOR CURIOUS MINDS</span><span>ONE WORKSPACE · MULTIPLE MODEL OPTIONS</span></div>
     </section>
 
-    <section className="dhi-manifesto" id="mission">
-      <div className="dhi-section-label">01 / PURPOSE</div>
-      <div className="dhi-manifesto-content"><p className="dhi-kicker">A DIFFERENT KIND OF AI COMPANY</p><h2>Built on research.<br/><span>Designed for everyone.</span></h2><p className="dhi-body">DHI AI aims to develop independent AI technology from the foundations up — combining original model research, responsible engineering and products designed for people everywhere.</p>
-        <div className="dhi-mission-grid"><article><span>OUR MISSION</span><p>Advance independent artificial intelligence through original research, responsible engineering and globally accessible technology.</p></article><article><span>OUR VISION</span><p>Build an Indian-origin AI research organisation that contributes meaningful advances to global artificial intelligence.</p></article><article><span>OUR PHILOSOPHY</span><p>Intelligence should expand human capability, improve knowledge and make technology accessible across borders.</p></article></div>
+    <section className="launch-intro" id="features">
+      <div className="launch-section-tag">01 / THE WORKSPACE</div>
+      <div className="launch-intro-main"><div><p className="launch-kicker">LESS SWITCHING. MORE THINKING.</p><h2>Your AI tools,<br/><em>in one clear place.</em></h2></div><p className="launch-section-copy">DHI AI brings the essentials together in a focused interface. No complicated setup to understand — just choose a model, ask your question and keep working.</p></div>
+      <div className="launch-feature-grid">
+        <article><span className="launch-feature-icon"><MessageSquare/></span><small>01 · CONVERSATION</small><h3>One simple chat</h3><p>Ask questions, develop ideas and work through tasks in a clean conversation space.</p></article>
+        <article><span className="launch-feature-icon"><Layers3/></span><small>02 · MODEL CHOICE</small><h3>Choose your model</h3><p>Switch between the currently connected model options without changing your workflow.</p></article>
+        <article><span className="launch-feature-icon"><AudioLines/></span><small>03 · COMPARISON</small><h3>Compare responses</h3><p>Request side-by-side answers from two selected models when you want another perspective.</p></article>
+        <article><span className="launch-feature-icon"><Clock3/></span><small>04 · CONTINUITY</small><h3>Pick up where you left off</h3><p>Sign in to save conversations to your account and return to them later.</p></article>
       </div>
     </section>
 
-    <section className="dhi-capabilities" id="research">
-      <div className="dhi-section-heading"><div><div className="dhi-section-label">02 / RESEARCH DOMAINS</div><p className="dhi-kicker">THE TECHNOLOGY WE AIM TO ADVANCE</p><h2>One research vision.<br/><span>Multiple frontiers.</span></h2></div><p className="dhi-heading-aside">Our research programme is designed as a connected ecosystem. Each capability will be developed, evaluated and released only when it meets defined quality and safety standards.</p></div>
-      <div className="dhi-capability-grid">{pillars.map((item, index) => <article className="dhi-capability" key={item.title}><div className="dhi-cap-top"><item.icon/><span>0{index + 1}</span></div><h3>{item.title}</h3><p>{item.text}</p><div className="dhi-cap-line"/></article>)}</div>
-    </section>
-
-    <section className="dhi-models" id="models">
-      <div className="dhi-section-label">03 / MODEL PROGRAMME</div>
-      <div className="dhi-section-heading model-heading"><div><p className="dhi-kicker">OUR FOUNDATION MODEL ROADMAP</p><h2>Meet the <span>DHI Core</span> family.</h2></div><p className="dhi-heading-aside">A staged research strategy: establish a strong language foundation first, then expand into reasoning and multimodal intelligence.</p></div>
-      <div className="dhi-model-layout">
-        <div className="dhi-model-list">{models.map((model) => <button key={model.id} className={activeModel === model.id ? "dhi-model-option active" : "dhi-model-option"} onClick={() => { setActiveModel(model.id); setDemoResult(""); }}><span className="dhi-model-index">0{models.indexOf(model) + 1}</span><span className="dhi-model-option-copy"><b>{model.name}</b><small>{model.size}</small></span><span className="dhi-model-stage">{model.stage}</span><ArrowUpRight/></button>)}</div>
-        <article className="dhi-model-detail"><div className="dhi-model-detail-top"><span className="dhi-chip">RESEARCH ROADMAP</span><span className="dhi-model-stage">{selected.stage.toUpperCase()}</span></div><div className="dhi-model-art"><div className="dhi-model-rings"/><div className="dhi-model-orb"><Mark/></div><span className="dhi-art-label">DHI / {selected.id.toUpperCase()}</span></div><p className="dhi-kicker">{selected.size}</p><h3>{selected.name}</h3><p className="dhi-body">{selected.desc}</p><div className="dhi-tags">{selected.tags.map(tag => <span key={tag}>{tag}</span>)}</div><a href="#preview" className="dhi-text-link">Explore the model preview <ArrowRight/></a></article>
+    <section className="launch-how" id="how-it-works">
+      <div className="launch-section-tag">02 / GET STARTED</div>
+      <div className="launch-how-heading"><p className="launch-kicker">A SHORTER PATH TO YOUR FIRST CHAT</p><h2>Three steps.<br/><em>Then you're creating.</em></h2></div>
+      <div className="launch-steps">
+        <article><span>01</span><div><h3>Open your workspace</h3><p>Choose Explore workspace and continue to the secure sign-in screen.</p></div><ArrowUpRight/></article>
+        <article><span>02</span><div><h3>Choose a model</h3><p>Select one of the currently connected model options in the chat workspace.</p></div><ArrowUpRight/></article>
+        <article><span>03</span><div><h3>Ask, compare and save</h3><p>Start a conversation, compare responses when useful and revisit saved chats.</p></div><ArrowUpRight/></article>
       </div>
-      <p className="dhi-disclaimer">Model sizes and capabilities shown are research targets, not released products or verified performance claims. Progress depends on compute, data, evaluation and funding milestones.</p>
+      <a className="launch-button primary launch-how-cta" href="/app">Go to DHI AI <ArrowRight/></a>
     </section>
 
-    <section className="dhi-preview" id="preview">
-      <div className="dhi-preview-copy"><div className="dhi-section-label">04 / INTERACTIVE PREVIEW</div><p className="dhi-kicker">A FIRST LOOK AT THE EXPERIENCE</p><h2>Explore how<br/><span>DHI AI could feel.</span></h2><p className="dhi-body">The DHI Core model is not live yet. Use this local interface preview to see the planned interaction flow — without sending your prompt to a model or storing it.</p><div className="dhi-preview-status"><span className="dhi-status-dot"/> DHI CORE · IN DEVELOPMENT</div></div>
-      <div className="dhi-playground"><div className="dhi-playground-head"><span><Mark small/> DHI AI <small>MODEL PREVIEW</small></span><span className="dhi-preview-pill"><i/> UI DEMO</span></div><div className="dhi-playground-model"><div className="dhi-avatar"><BrainCircuit/></div><div><b>DHI Core</b><small>Foundation model · Planned V1</small></div><span className="dhi-coming-tag">COMING SOON</span></div><form onSubmit={showPreview}><label htmlFor="dhi-prompt">YOUR PROMPT</label><textarea id="dhi-prompt" rows={3} value={prompt} onChange={event => { setPrompt(event.target.value); setDemoResult(""); }} placeholder="Ask a question..."/><div className="dhi-playground-bottom"><span><LockKeyhole/> Local preview · Not transmitted</span><button type="submit">Try preview <ArrowRight/></button></div></form>{demoResult && <div className="dhi-demo-response"><span><Sparkles/> PREVIEW NOTICE</span><p>{demoResult}</p></div>}<div className="dhi-sample-prompts"><span>IDEAS TO EXPLORE</span><button onClick={() => { setPrompt("How can AI support learning in multiple Indian languages?"); setDemoResult(""); }}>Multilingual learning</button><button onClick={() => { setPrompt("Explain the difference between reasoning and retrieval."); setDemoResult(""); }}>AI reasoning</button></div><p className="dhi-playground-foot">Illustrative interface only. No live DHI model inference is available at this stage.</p></div>
+    <section className="launch-models">
+      <div className="launch-models-copy"><div className="launch-section-tag">03 / CONNECTED MODELS</div><p className="launch-kicker">A CHOICE OF MODELS</p><h2>Different models.<br/><em>One workflow.</em></h2><p>These are the model options currently shown in the workspace. Availability and usage limits depend on the connected provider.</p><a href="/app" className="launch-text-link">View the workspace <ArrowUpRight/></a></div>
+      <div className="launch-model-list">{modelNames.map((name, i) => <div key={name}><span>0{i + 1}</span><b>{name}</b><small>CONNECTED OPTION</small><Check/></div>)}</div>
     </section>
 
-    <section className="dhi-architecture" id="architecture">
-      <div className="dhi-section-label">05 / SYSTEM ARCHITECTURE</div><div className="dhi-section-heading"><div><p className="dhi-kicker">A CONNECTED TECHNOLOGY STACK</p><h2>From research<br/><span>to real-world impact.</span></h2></div><p className="dhi-heading-aside">A modular architecture keeps model training, product experiences, infrastructure and safety independently governed — while working together as one platform.</p></div>
-      <div className="dhi-stack">
-        <div className="dhi-stack-row stack-product"><span>01</span><div><b>Global AI products</b><small>Web · Mobile · Developer API · Enterprise</small></div><Globe2/></div>
-        <div className="dhi-stack-connector"/>
-        <div className="dhi-stack-row stack-gateway"><span>02</span><div><b>AI gateway and orchestration</b><small>Authentication · Model routing · Rate limits · Observability</small></div><Network/></div>
-        <div className="dhi-stack-connector"/>
-        <div className="dhi-stack-grid"><article><BrainCircuit/><b>Foundation models</b><small>Language · Reasoning · Coding</small></article><article><Eye/><b>Multimodal systems</b><small>Vision · Audio · Video research</small></article><article><Database/><b>Knowledge and memory</b><small>Retrieval · Context · Data governance</small></article><article><Zap/><b>Agent runtime</b><small>Tools · Planning · Controlled actions</small></article></div>
-        <div className="dhi-stack-connector"/>
-        <div className="dhi-stack-row stack-training"><span>03</span><div><b>Research and training platform</b><small>Datasets · Pre-training · Post-training · Evaluation · Model registry</small></div><Layers3/></div>
-        <div className="dhi-stack-connector"/>
-        <div className="dhi-stack-row stack-infra"><span>04</span><div><b>Hybrid compute infrastructure</b><small>Owned research cluster · Rented GPU capacity · Storage · Networking</small></div><Cpu/></div>
-      </div>
-      <div className="dhi-architecture-foot"><span><Check/> Independent model weights</span><span><Check/> Versioned datasets</span><span><Check/> Security and safety gates</span><span><Check/> Regional deployment strategy</span></div>
+    <section className="launch-trust" id="faq">
+      <div className="launch-trust-icon"><ShieldCheck/></div>
+      <div><p className="launch-kicker">CLEAR BY DESIGN</p><h2>Know what’s ready.<br/><em>Know what’s next.</em></h2><p>DHI AI is actively evolving. The workspace currently supports AI chat, model selection, response comparison and saved chat history. Image, video, voice generation and additional integrations are still in development.</p><div className="launch-status"><span><i/> AVAILABLE NOW</span><span>CHAT · MODEL SWITCHING · COMPARISON · HISTORY</span></div></div>
     </section>
 
-    <section className="dhi-compute">
-      <div className="dhi-section-label">06 / COMPUTE STRATEGY</div><div className="dhi-compute-heading"><p className="dhi-kicker">HYBRID BY DESIGN</p><h2>Build what matters.<br/><span>Scale when ready.</span></h2><p className="dhi-body">Begin with rented GPU capacity for flexible experiments, while building a focused owned cluster for continuous research, testing and inference. Expand only after utilisation and cost are measured.</p></div>
-      <div className="dhi-compute-cards"><article><div className="dhi-compute-icon"><Globe2/></div><span>FLEXIBLE CAPACITY</span><h3>Rented GPU compute</h3><p>Large training runs, experiments and burst workloads through qualified cloud and shared compute providers.</p><ul><li>Elastic capacity</li><li>Lower initial capital commitment</li><li>Multiple supplier options</li></ul></article><article><div className="dhi-compute-icon"><Cpu/></div><span>LONG-TERM CONTROL</span><h3>Owned research cluster</h3><p>A measured, expandable on-premise or colocation cluster for research continuity and selected inference workloads.</p><ul><li>Dedicated research access</li><li>Controlled environment</li><li>Capacity expansion by evidence</li></ul></article></div>
-      <div className="dhi-gpu-band"><div><span>CAPACITY PLANNING</span><b>8–16 → 64–128 → 128–512 accelerators</b><small>Indicative staged planning bands, subject to workload benchmarking and procurement.</small></div><a href="https://compute.indiaai.gov.in/pricelist" target="_blank" rel="noreferrer">Explore IndiaAI compute <ArrowUpRight/></a></div>
+    <section className="launch-final">
+      <div className="launch-final-glow" aria-hidden="true"/>
+      <p className="launch-kicker">YOUR NEXT IDEA STARTS HERE</p><h2>Make space for<br/><em>better thinking.</em></h2><p>Step into the DHI AI workspace and explore the features currently available.</p><a className="launch-button primary" href="/app">Explore DHI AI <ArrowRight/></a>
+      <small>Sign-in required · Provider usage limits may apply</small>
     </section>
 
-    <section className="dhi-roadmap" id="roadmap">
-      <div className="dhi-section-label">07 / EXECUTION ROADMAP</div><div className="dhi-section-heading"><div><p className="dhi-kicker">A GATED 36-MONTH PLAN</p><h2>Ambition, translated<br/><span>into milestones.</span></h2></div><p className="dhi-heading-aside">Each stage has a measurable deliverable. The next investment gate depends on technical feasibility, model quality, safety and operating cost — not the calendar alone.</p></div>
-      <div className="dhi-timeline">{phases.map((phase, index) => <article className="dhi-phase" key={phase.time}><div className="dhi-phase-marker"><span>0{index + 1}</span></div><div className="dhi-phase-content"><span className="dhi-phase-time">{phase.time}</span><h3>{phase.title}</h3><p>{phase.desc}</p><div><Check/> <b>Deliverable:</b> {phase.deliverable}</div></div></article>)}</div>
-    </section>
-
-    <section className="dhi-investment">
-      <div className="dhi-section-label">08 / FUNDING FRAMEWORK</div><div className="dhi-investment-layout"><div><p className="dhi-kicker">THREE-YEAR PLANNING SCENARIO</p><h2>Invest with<br/><span>discipline.</span></h2><p className="dhi-body">A preliminary funding target for an ambitious independent research and product programme. Funding would be released in stages against technical and commercial milestones.</p><div className="dhi-budget-number">₹200–300 <small>crore</small></div><p className="dhi-budget-caption">Indicative three-year planning range · Not a raised amount or confirmed valuation</p></div><div className="dhi-budget-breakdown">{[{name:"GPU training and compute",share:"30%"},{name:"Research and engineering",share:"22%"},{name:"Data and licensing",share:"10%"},{name:"Owned infrastructure",share:"14%"},{name:"Multimodal development",share:"8%"},{name:"Global deployment",share:"6%"},{name:"Safety and compliance",share:"4%"},{name:"Contingency",share:"6%"}].map(item => <div className="dhi-budget-row" key={item.name}><span>{item.name}</span><b>{item.share}</b><i style={{width:item.share}}/></div>)}</div></div>
-      <p className="dhi-disclaimer">Budget allocation percentages are illustrative planning assumptions. Actual costs depend on model size, training tokens, GPU type and utilisation, team, data rights, deployment volume, taxes and financing conditions. Frontier-level performance is not guaranteed.</p>
-    </section>
-
-    <section className="dhi-principles">
-      <div className="dhi-section-label">09 / TRUST AND RESPONSIBILITY</div><div><p className="dhi-kicker">ENGINEERED WITH RESPONSIBILITY</p><h2>Trust is part of<br/><span>the architecture.</span></h2></div><div className="dhi-principle-grid"><article><ShieldCheck/><b>Safety by design</b><p>Evaluation gates, misuse testing and clear release criteria.</p></article><article><LockKeyhole/><b>Privacy and security</b><p>Access controls, encryption and responsible data handling.</p></article><article><Database/><b>Data provenance</b><p>Documented sources, licence tracking and dataset governance.</p></article><article><Globe2/><b>Global readiness</b><p>Regional compliance and transparent product capabilities.</p></article></div>
-    </section>
-
-    <section className="dhi-final-cta"><div className="dhi-cta-orb"/><div className="dhi-section-label">10 / THE NEXT CHAPTER</div><Mark/><p className="dhi-kicker">INDIA ROOTED · GLOBALLY BUILT</p><h2>The future is<br/><span>under research.</span></h2><p>We are building the foundations for a new generation of independent intelligence.</p><div className="dhi-coming-large"><CircleDot/> DHI AI — COMING SOON</div></section>
-
-    <footer className="dhi-footer"><a className="dhi-brand" href="#top"><Mark small/><span>DHI <b>AI</b><small>INTELLIGENCE WITHOUT BOUNDARIES</small></span></a><div className="dhi-footer-links"><a href="#mission">Our purpose</a><a href="#models">Models</a><a href="#research">Research</a><a href="#roadmap">Roadmap</a></div><div className="dhi-footer-bottom"><span>© 2026 DHI AI · INDIA</span><span>INDEPENDENT AI RESEARCH INITIATIVE</span><a href="https://indiaai.gov.in/" target="_blank" rel="noreferrer">INDIA AI ECOSYSTEM <ArrowUpRight/></a></div><p className="dhi-legal-note">DHI AI is a proposed brand identity for an AI research initiative. Company registration, trademark clearance, model development and product availability are subject to completion. All model sizes, timelines and budgets are forward-looking planning targets, not claims of existing capabilities.</p></footer>
+    <footer className="launch-footer"><a className="launch-brand" href="#top"><BrandMark/><span>DHI <b>AI</b><small>ONE INTELLIGENT WORKSPACE</small></span></a><div className="launch-footer-links"><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#faq">What's available</a><a href="/app">Workspace</a></div><div className="launch-footer-bottom"><span>© 2026 DHI AI</span><span>BUILT FOR THE NEXT IDEA.</span><a href="mailto:hello@dhi-ai.com">Contact</a></div></footer>
   </main>;
 }
