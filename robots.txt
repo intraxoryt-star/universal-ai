@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://dhi-ai-coming-soon.vercel.app/sitemap.xml
